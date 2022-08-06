@@ -11,6 +11,7 @@ public class Movement : MonoBehaviour
   private Rigidbody rb;
   private Transform feet;
   private Transform head;
+  [SerializeField] private Transform rArm;
   [SerializeField] private LayerMask FloorMask;
   [SerializeField] private LayerMask PropLayer;
   int currlayerMask;
@@ -52,6 +53,7 @@ public class Movement : MonoBehaviour
     
     player.transform.Rotate(0f, rotY, 0f);
     main.transform.localRotation = Quaternion.Euler(rotX, 0f, 0f);
+    rArm.transform.localRotation = main.transform.localRotation;
   }
 
   private void Move()
