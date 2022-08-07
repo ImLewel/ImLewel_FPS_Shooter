@@ -241,8 +241,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbbeaf355c114b34ba5b97532e8f5b87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxBullets: 20
   damage: 5
+  bullets: 20
+  magazines: 3
   distance: 50
+  canShoot: 0
+  canReload: 0
   cam: {fileID: 0}
   prefabPos: {x: 0, y: 0.176, z: 0.171}
 --- !u!65 &7747763384274389957
