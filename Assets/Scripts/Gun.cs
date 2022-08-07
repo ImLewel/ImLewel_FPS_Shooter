@@ -5,21 +5,22 @@ public class Gun : MonoBehaviour
   RaycastHit hit;
   [SerializeField] private int damage;
   [SerializeField] private float distance;
-  [SerializeField] private Camera main;
+  [SerializeField] private Camera cam;
+  [SerializeField] private Vector3 prefabPos;
+  public Vector3 PrefabPos { get { return prefabPos; } }
 
   private void Start()
   {
-    main = Camera.main;
   }
-
   private void Update()
   {
-    if (Input.GetMouseButtonDown(0)) Shoot();
+    if (transform.parent != null) cam = Camera.main;
+    if (Input.GetMouseButtonDown(0) && cam != null) Shoot();
   }
 
   void Shoot()
   {
-    if (Physics.Raycast(main.transform.GetComponent<MainRayCast>().Ray, out hit, distance))
+    if (Physics.Raycast(cam.transform.GetComponent<MainRayCast>().Ray, out hit, distance))
     {
       var currEnemy = hit.transform.gameObject.GetComponent<Enemy>();
       if (currEnemy != null)

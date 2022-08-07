@@ -1,15 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-  [SerializeField] private GameObject enemy;
   [SerializeField] private int health;
   [SerializeField] private int armor;
   private void Start()
   {
-    enemy = this.gameObject;
   }
   public int Health
   {
@@ -17,7 +13,7 @@ public class Enemy : MonoBehaviour
     set
     {
       health = value; 
-      if (health <= 0) Destroy(enemy);
+      if (health <= 0) Destroy(this.gameObject);
     }
   }
   public int Armor { 

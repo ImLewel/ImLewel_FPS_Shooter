@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 public class Movement : MonoBehaviour
 {
@@ -10,7 +8,6 @@ public class Movement : MonoBehaviour
   private GameObject player;
   private Rigidbody rb;
   private Transform feet;
-  private Transform head;
   [SerializeField] private Transform rArm;
   [SerializeField] private LayerMask FloorMask;
   [SerializeField] private LayerMask PropLayer;
@@ -30,7 +27,6 @@ public class Movement : MonoBehaviour
     player = transform.gameObject;
     rb = player.GetComponent<Rigidbody>();
     feet = player.transform.GetChild(1);
-    head = player.transform.GetChild(2);
     main = Camera.main;
     plLocScale = player.transform.localScale;
     currlayerMask = FloorMask | PropLayer;
