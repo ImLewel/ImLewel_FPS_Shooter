@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Gun : MonoBehaviour
@@ -8,12 +9,15 @@ public class Gun : MonoBehaviour
   [SerializeField] private int bullets;
   [SerializeField] private int magazines;
   [SerializeField] private float distance;
-  [SerializeField] private bool canShoot;
-  [SerializeField] private bool canReload;
-  [SerializeField] private Camera cam;
+  private bool canShoot;
+  private bool canReload;
+  private Camera cam;
   [SerializeField] private Vector3 prefabPos;
+  [SerializeField] private float cooldown;
+  private float realTimeCooldown = 0; 
   public Vector3 PrefabPos { get { return prefabPos; } }
 
+  public int Damage { get { return damage; } }
   public int MaxBullets { get { return maxBullets; } }
   public int Bullets
   {
@@ -51,7 +55,12 @@ public class Gun : MonoBehaviour
   private void Update()
   {
     if (transform.parent != null) cam = Camera.main;
-    if (Input.GetMouseButtonDown(0) && canShoot && cam != null) Shoot();
+    if (Time.time > realTimeCooldown) {
+      if (Input.GetMouseButton(0) && canShoot && cam != null) {
+        Shoot();
+        realTimeCooldown = Time.time + cooldown;
+      }
+    }
     if (Input.GetKeyDown(KeyCode.R) && canReload) Reload(); 
   }
 

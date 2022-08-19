@@ -248,8 +248,11 @@ MonoBehaviour:
   distance: 50
   canShoot: 0
   canReload: 0
+  isFullAuto: 0
   cam: {fileID: 0}
   prefabPos: {x: 0, y: 0.176, z: 0.171}
+  cooldown: 5
+  realTimeCooldown: 0
 --- !u!65 &7747763384274389957
 BoxCollider:
   m_ObjectHideFlags: 0

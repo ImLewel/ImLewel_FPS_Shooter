@@ -256,10 +256,8 @@ MonoBehaviour:
   bullets: 30
   magazines: 4
   distance: 300
-  canShoot: 0
-  canReload: 0
-  cam: {fileID: 0}
   prefabPos: {x: 0, y: 0.233, z: 0.503}
+  cooldown: 0.3
 --- !u!65 &906395916149421514
 BoxCollider:
   m_ObjectHideFlags: 0

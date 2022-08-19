@@ -3,12 +3,11 @@ using UnityEngine.UI;
 public class Inventory : MonoBehaviour
 {
   RaycastHit hit;
-  [SerializeField] private int damage;
   [SerializeField] private float distance;
   [SerializeField] private Camera main;
   [SerializeField] private Transform rHand;
   private GameObject currItem;
-  [SerializeField] private Text stats;
+  [SerializeField] private GameObject stats;
   [SerializeField] private bool canTake = true;
   private Component itemComponent;
 
@@ -27,6 +26,7 @@ public class Inventory : MonoBehaviour
         currItem = hit.transform.gameObject;
         if (currItem.isStatic == false)
         {
+          stats = GameObject.FindWithTag("HUD");
           TakeItem(currItem);
           canTake = false;
         }
@@ -49,17 +49,13 @@ public class Inventory : MonoBehaviour
 
   public void DrawInvStats()
   {
-    if (currItem != null && currItem.GetComponent<Gun>() != null)
+    if (currItem != null && currItem.GetComponent<Gun>() != null && stats != null)
     {
-      stats.text =
-        "Damage: " + damage.ToString() + "\n" +
-
-        "Bullets: " +
-        currItem.GetComponent<Gun>().Bullets.ToString() +
-        " / " +
-        currItem.GetComponent<Gun>().MaxBullets.ToString() + "\n" +
-
-        "Magazines: " + currItem.GetComponent<Gun>().Magazines.ToString();
+      var statsComponent = stats.GetComponent<UImanager>();
+      var gunComponent = currItem.GetComponent<Gun>();
+      statsComponent.damageLabel.text = $"Damage: {gunComponent.Damage}";
+      statsComponent.bulletsLabel.text = $"Bullets: {gunComponent.Bullets} / {gunComponent.MaxBullets}";
+      statsComponent.magazinesLabel.text = $"Magazines: {gunComponent.Magazines}";
     }
   }
 }
