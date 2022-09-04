@@ -9,7 +9,16 @@ public class Inventory : MonoBehaviour
   private GameObject currItem;
   [SerializeField] private GameObject stats;
   [SerializeField] private bool canTake = true;
-  private Component itemComponent;
+  [SerializeField] private int invPos = 0;
+  public int InvPos
+  {
+    get => invPos;
+    set {
+      if (value > rHand.childCount - 1) invPos = 0;
+      else if (value < 0) invPos = rHand.childCount == 0 ? 0 : rHand.childCount - 1;
+      else invPos = value;
+    }
+  }
 
   private void Start()
   {
@@ -18,24 +27,35 @@ public class Inventory : MonoBehaviour
 
   void Update()
   {
-    DrawInvStats();
+    SwitchItem();
     if (Input.GetKeyDown(KeyCode.F) && canTake)
     {
       if (Physics.Raycast(main.transform.GetComponent<MainRayCast>().Ray, out hit, distance))
       {
-        currItem = hit.transform.gameObject;
-        if (currItem.isStatic == false)
+        var currObj = hit.transform.gameObject;
+        if (currObj.isStatic == false)
         {
           stats = GameObject.FindWithTag("HUD");
-          TakeItem(currItem);
-          canTake = false;
+          TakeItem(currObj);
         }
       }
     }
-    if (Input.GetKeyDown(KeyCode.G))
+    if (Input.GetKeyDown(KeyCode.G)) DropItem(currItem);
+  }
+
+  public void SwitchItem()
+  {
+    if (Input.mouseScrollDelta.y != 0)
     {
-      Destroy(currItem);
-      canTake = true;
+      if (Input.GetAxis("Mouse ScrollWheel") > 0f) InvPos += 1;
+      else if (Input.GetAxis("Mouse ScrollWheel") < 0f) InvPos -= 1;
+    }
+    else if (rHand.childCount >= 1)
+    {
+      currItem = rHand.GetChild(InvPos).gameObject;
+      currItem.SetActive(true);
+      DrawInvStats(currItem);
+      DisableNActive();
     }
   }
 
@@ -45,14 +65,34 @@ public class Inventory : MonoBehaviour
     prefab.transform.localPosition = prefab.GetComponent<Gun>().PrefabPos;
     prefab.transform.localRotation = Quaternion.identity;
     Destroy(prefab.GetComponent<BoxCollider>());
+    prefab.GetComponent<Rigidbody>().isKinematic = true;
+    DisableNActive();
   }
 
-  public void DrawInvStats()
+  public void DropItem(GameObject item)
   {
-    if (currItem != null && currItem.GetComponent<Gun>() != null && stats != null)
+    item.transform.SetParent(null);
+    item.AddComponent<BoxCollider>();
+    item.GetComponent<Rigidbody>().isKinematic = false;
+  }
+
+  public void DisableNActive()
+  {
+    if (rHand.childCount > 1)
+    {
+      for (int index = 0; index < rHand.childCount; index++)
+      {
+        if (index != InvPos) rHand.GetChild(index).gameObject.SetActive(false);
+      }
+    }
+  }
+
+  public void DrawInvStats(GameObject item)
+  {
+    if (item != null && item.GetComponent<Gun>() != null && stats != null)
     {
       var statsComponent = stats.GetComponent<UImanager>();
-      var gunComponent = currItem.GetComponent<Gun>();
+      var gunComponent = item.GetComponent<Gun>();
       statsComponent.damageLabel.text = $"Damage: {gunComponent.Damage}";
       statsComponent.bulletsLabel.text = $"Bullets: {gunComponent.Bullets} / {gunComponent.MaxBullets}";
       statsComponent.magazinesLabel.text = $"Magazines: {gunComponent.Magazines}";
