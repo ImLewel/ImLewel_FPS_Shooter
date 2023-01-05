@@ -13,6 +13,8 @@ public class Gun : MonoBehaviour
   private bool canReload;
   private Camera cam;
   [SerializeField] private Vector3 prefabPos;
+  [SerializeField] private GameObject muzzleFlash;
+  [SerializeField] float muzzleFlashDuration;
   [SerializeField] private float cooldown;
   private float realTimeCooldown = 0; 
   public Vector3 PrefabPos { get { return prefabPos; } }
@@ -51,12 +53,14 @@ public class Gun : MonoBehaviour
   {
     canShoot = Bullets > 0 ? true : false;
     canReload = Magazines > 0 ? true : false;
+    muzzleFlashDuration = muzzleFlash.GetComponent<ParticleSystem>().main.duration;
+   /// muzzleFlash.SetActive(false);
   }
   private void Update()
   {
     if (transform.parent != null) cam = Camera.main;
     if (Time.time > realTimeCooldown) {
-      if (Input.GetMouseButton(0) && canShoot && cam != null) {
+      if (Input.GetKey(KeyCode.Mouse0) && canShoot && cam != null) {
         Shoot();
         realTimeCooldown = Time.time + cooldown;
       }
@@ -67,6 +71,8 @@ public class Gun : MonoBehaviour
   void Shoot()
   {
     Bullets--;
+    muzzleFlash.SetActive(true);
+    StartCoroutine(flashDelay());
     if (Physics.Raycast(cam.transform.GetComponent<MainRayCast>().Ray, out hit, distance))
     {
       var currEnemy = hit.transform.gameObject.GetComponent<Enemy>();
@@ -75,6 +81,11 @@ public class Gun : MonoBehaviour
         currEnemy.Health = currEnemy.Health - damage;
       }
     }
+  }
+
+  IEnumerator flashDelay() {
+    yield return new WaitForSeconds(muzzleFlashDuration);
+    muzzleFlash.SetActive(false);
   }
 
   void Reload()
