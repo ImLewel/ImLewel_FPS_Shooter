@@ -4,32 +4,36 @@ public class Movement : MonoBehaviour {
   private Vector3 PlayerMovementInput;
   private Vector2 PlayerMouseInput;
   private Vector3 MoveVector;
+
   private Camera main;
   private GameObject player;
-  private Collider playerCollider;
+  private CapsuleCollider playerCollider;
   private Rigidbody rb;
+  private Transform body;
   [SerializeField] private Transform rArm;
+
+  private float origPlayerHeight;
   [SerializeField] private float speed = 5f;
   [SerializeField] private float jumpForce = 10f;
   [SerializeField] private float sensitivity = 1f;
+  [SerializeField] private float crouchOffset = 0.5f;
+
   [SerializeField] private bool canJump;
   [SerializeField] private bool crouching;
   [SerializeField] private bool grounded;
+
   private float rotX;
   private float rotY;
-  private Vector3 plLocScale;
-  Dictionary<string, float> pData;
+
+  Dictionary<Transform, Vector3> originalChildPositions = new();
   void Start() {
     Cursor.lockState = CursorLockMode.Locked;
     player = transform.gameObject;
     rb = player.GetComponent<Rigidbody>();
-    playerCollider = player.GetComponent<Collider>();
+    playerCollider = player.GetComponent<CapsuleCollider>();
+    origPlayerHeight = playerCollider.height;
     main = Camera.main;
-    plLocScale = player.transform.localScale;
-    pData = new() {
-      ["scaleY"] = player.transform.localScale.y,
-      ["radius"] = (player.transform.localScale.x / 2f) - 0.1f,
-    };
+    body = transform.Find("Body");
   }
 
   void Update() {
@@ -57,32 +61,64 @@ public class Movement : MonoBehaviour {
 
     if (Input.GetKeyDown(KeyCode.Space) && grounded) canJump = true;
 
-    if (Input.GetKey(KeyCode.LeftControl))
-      crouching = true;
+    if (Input.GetKey(KeyCode.LeftControl)) crouching = true;
 
-    if (crouching && player.transform.localScale.y == pData["scaleY"]) {
-      player.transform.localScale = new Vector3(plLocScale.x, 0.5f, plLocScale.z);
-    }
+    if (crouching) CrouchState(true, crouchOffset);
 
     if (!Input.GetKey(KeyCode.LeftControl) && crouching)
-      if (!SphereChecker(player.transform, pData["scaleY"], pData["radius"])) {
-        crouching = false;
-      }
+      if (!CapsuleChecker()) crouching = false;
 
-    if (!crouching)
-      player.transform.localScale = new Vector3(plLocScale.x, pData["scaleY"], plLocScale.z);
+    if (!crouching) CrouchState(false, crouchOffset);
   }
 
-  bool SphereChecker(Transform pos1, float yExpand, float radius) =>
-    Physics.CheckSphere(pos1.position + new Vector3(0f, yExpand, 0f), radius);
+  bool CapsuleChecker() {
+    float difference = origPlayerHeight - playerCollider.height;
+    float radiusOfOne = difference / 4f; // capsule => 2 sphere => 2 diameters => 4 radius from previous
+
+    Vector3 centerOne = transform.position + Vector3.up * 2f * radiusOfOne;
+    //0.1f reduces height a little because player can stand at 2f but CheckCapsule can collide ceil at 2f too
+    Vector3 centerTwo = transform.position + (Vector3.up * (radiusOfOne - 0.1f)) + (Vector3.up * difference);
+
+    return Physics.CheckCapsule(centerOne, centerTwo, radiusOfOne, ~LayerMask.GetMask("PlayerLayer"));
+  }
 
   bool isGrounded(GameObject obj, Collider collider) =>
     Physics.Raycast(obj.transform.position, -obj.transform.up, collider.bounds.extents.y + 0.1f);
+    //0.1f extends raycast a little further to check outer surface
 
   void Jump() => rb.AddForce(0, jumpForce, 0, ForceMode.Impulse);
 
-  private void FixedUpdate()
-  {
+  void CrouchState(bool state, float _offset) {
+    Vector3 newPosition;
+
+    foreach (Transform child in transform) {
+      if (!originalChildPositions.ContainsKey(child)) 
+        originalChildPositions.Add(child, child.localPosition);
+
+      if (state) {
+        if (child == body && child.localScale.y != _offset) {
+          child.localScale = new Vector3(child.localScale.x, child.localScale.y * _offset, child.localScale.z);
+          playerCollider.height *= _offset;
+        }
+        newPosition = new Vector3(
+            originalChildPositions[child].x,
+            originalChildPositions[child].y * _offset,
+            originalChildPositions[child].z
+          );
+      }
+      else {
+        if (child == body && playerCollider.height != origPlayerHeight) {
+          child.localScale = new Vector3(child.localScale.x, child.localScale.y * (1f / _offset), child.localScale.z);
+          playerCollider.height *= (1f / _offset);
+        }
+        newPosition = originalChildPositions[child];
+      }
+        
+      child.localPosition = newPosition;
+    }
+  }
+
+  private void FixedUpdate() {
     if (canJump) {
       Jump();
       canJump = false;
