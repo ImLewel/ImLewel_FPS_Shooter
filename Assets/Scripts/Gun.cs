@@ -27,7 +27,7 @@ public class Gun : MonoBehaviour {
     get => bullets;
     set {
       bullets = value;
-      if (bullets < 0) {
+      if (bullets <= 0) {
         bullets = 0;
         canShoot = false;
       }
