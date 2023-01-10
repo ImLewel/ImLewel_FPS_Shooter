@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Collections;
+using UnityEngine.UI;
 using UnityEngine;
 public class Movement : MonoBehaviour {
   private Vector3 PlayerMovementInput;
@@ -11,16 +13,21 @@ public class Movement : MonoBehaviour {
   private Rigidbody rb;
   private Transform body;
   [SerializeField] private Transform rArm;
+  private Slider stamina;
 
   private float origPlayerHeight;
   [SerializeField] private float speed = 5f;
+  [SerializeField] private float sprintSpeed = 7f;
+  [SerializeField] private float currentSpeed = 5f;
   [SerializeField] private float jumpForce = 10f;
   [SerializeField] private float sensitivity = 1f;
   [SerializeField] private float crouchOffset = 0.5f;
 
-  [SerializeField] private bool canJump;
-  [SerializeField] private bool crouching;
-  [SerializeField] private bool grounded;
+  private bool canJump;
+  private bool crouching;
+  private bool grounded;
+
+  private Coroutine cor;
 
   private float rotX;
   private float rotY;
@@ -34,6 +41,7 @@ public class Movement : MonoBehaviour {
     origPlayerHeight = playerCollider.height;
     main = Camera.main;
     body = transform.Find("Body");
+    stamina = GameObject.Find("HUD").GetComponent<UImanager>().progressBar;
   }
 
   void Update() {
@@ -55,10 +63,24 @@ public class Movement : MonoBehaviour {
   }
 
   private void Move() {
-    MoveVector = transform.TransformDirection(PlayerMovementInput) * speed;
+    MoveVector = transform.TransformDirection(PlayerMovementInput) * currentSpeed;
     rb.velocity = new Vector3(MoveVector.x, rb.velocity.y, MoveVector.z);
 
-    if (Input.GetKeyDown(KeyCode.Space) && grounded) canJump = true;
+    if (Input.GetKey(KeyCode.LeftShift) && grounded && !crouching && stamina.value > stamina.minValue && PlayerMovementInput != Vector3.zero) {
+      currentSpeed = sprintSpeed;
+      if (cor != null)
+        StopCoroutine(cor);
+      cor = StartCoroutine(StaminaDelay(0.1f, 0f));
+    }
+    else {
+      currentSpeed = speed;
+      if (cor != null)
+        StopCoroutine(cor);
+      cor = StartCoroutine(StaminaDelay(0.15f, 1f));
+    }
+
+    if (Input.GetKeyDown(KeyCode.Space) && grounded && stamina.value >= 0.25f) 
+      canJump = true;
 
     if (Input.GetKey(KeyCode.LeftControl)) crouching = true;
 
@@ -68,6 +90,20 @@ public class Movement : MonoBehaviour {
       if (!CapsuleChecker()) crouching = false;
 
     if (!crouching) CrouchState(false, crouchOffset);
+  }
+
+  IEnumerator StaminaDelay(float rate, float barrier) {
+    while (true) {
+      if (grounded) {
+        if (stamina.value > barrier) {
+          stamina.value -= rate * Time.deltaTime;
+        }
+        else if (stamina.value < barrier) {
+          stamina.value += rate * Time.deltaTime;
+        }
+      }
+      yield return new WaitForSeconds(0.1f);
+    }
   }
 
   bool CapsuleChecker() {
@@ -83,9 +119,13 @@ public class Movement : MonoBehaviour {
 
   bool isGrounded(GameObject obj, Collider collider) =>
     Physics.Raycast(obj.transform.position, -obj.transform.up, collider.bounds.extents.y + 0.1f);
-    //0.1f extends raycast a little further to check outer surface
+  //0.1f extends raycast a little further to check outer surface
 
-  void Jump() => rb.AddForce(0, jumpForce, 0, ForceMode.Impulse);
+  void Jump() {
+    if (cor != null) StopCoroutine(cor);
+    rb.AddForce(0, jumpForce, 0, ForceMode.Impulse);
+    stamina.value -= 0.25f;
+  }
 
   void CrouchState(bool state, float _offset) {
     Vector3 newPosition;
