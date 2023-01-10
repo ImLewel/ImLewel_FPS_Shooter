@@ -49,6 +49,7 @@ public class Movement : MonoBehaviour {
     PlayerMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
     grounded = isGrounded(player, playerCollider);
     Move();
+    MoveCamera();
   }
 
   void MoveCamera() {
@@ -162,10 +163,6 @@ public class Movement : MonoBehaviour {
       Jump();
       canJump = false;
     }
-
   }
 
-  private void LateUpdate() {
-    MoveCamera();
-  }
 }

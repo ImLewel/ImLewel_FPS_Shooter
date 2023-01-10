@@ -51,16 +51,17 @@ public class Gun : MonoBehaviour {
     muzzleFlashDuration = muzzleFlash.GetComponent<ParticleSystem>().main.duration;
   }
   private void Update() {
-    if (transform.parent != null)
+    if (transform.parent != null) {
       cam = Camera.main;
-    if (Time.time > realTimeCooldown) {
-      if (Input.GetKey(KeyCode.Mouse0) && canShoot && cam != null) {
-        Shoot();
-        realTimeCooldown = Time.time + cooldown;
+      if (Time.time > realTimeCooldown) {
+        if (Input.GetKey(KeyCode.Mouse0) && canShoot && cam != null) {
+          Shoot();
+          realTimeCooldown = Time.time + cooldown;
+        }
       }
+      if (Input.GetKeyDown(KeyCode.R) && canReload)
+        Reload();
     }
-    if (Input.GetKeyDown(KeyCode.R) && canReload)
-      Reload();
   }
 
   void Shoot() {

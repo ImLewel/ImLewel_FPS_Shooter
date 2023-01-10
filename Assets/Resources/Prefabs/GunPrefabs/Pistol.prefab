@@ -211,7 +211,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5890891780384477125
 Transform:
   m_ObjectHideFlags: 0
@@ -5114,15 +5114,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbbeaf355c114b34ba5b97532e8f5b87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefabPos: {x: 0, y: 0.176, z: 0.171}
+  muzzleFlash: {fileID: 4641774771668926874}
   maxBullets: 20
   damage: 5
   bullets: 20
   magazines: 3
   distance: 50
-  prefabPos: {x: 0, y: 0.176, z: 0.171}
-  muzzleFlash: {fileID: 4641774771668926874}
   muzzleFlashDuration: 0
-  cooldown: 5
+  cooldown: 0.2
 --- !u!65 &7747763384274389957
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -59,15 +59,17 @@ public class Inventory : MonoBehaviour {
     prefab.transform.parent = rHand;
     prefab.transform.localPosition = prefab.GetComponent<Gun>().PrefabPos;
     prefab.transform.localRotation = Quaternion.identity;
-    Destroy(prefab.GetComponent<BoxCollider>());
+    //Destroy(prefab.GetComponent<BoxCollider>());
+    prefab.GetComponent<BoxCollider>().enabled = false;
     prefab.GetComponent<Rigidbody>().isKinematic = true;
     DisableNActive();
   }
 
   public void DropItem(GameObject item) {
     item.transform.SetParent(null);
-    item.AddComponent<BoxCollider>();
+    item.GetComponent<BoxCollider>().enabled = true;
     item.GetComponent<Rigidbody>().isKinematic = false;
+    --InvPos;
   }
 
   public void DisableNActive() {
