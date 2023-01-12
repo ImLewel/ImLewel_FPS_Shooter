@@ -3,8 +3,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour {
   [SerializeField] private int health;
   [SerializeField] private int armor;
-  private void Start() {
-  }
+
   public int Health {
     get => health;
     set {

@@ -45,7 +45,7 @@ public class Gun : MonoBehaviour {
     }
   }
 
-  public void Start() {
+  private void Start() {
     canShoot = Bullets > 0 ? true : false;
     canReload = Magazines > 0 ? true : false;
     muzzleFlashDuration = muzzleFlash.GetComponent<ParticleSystem>().main.duration;
@@ -68,7 +68,7 @@ public class Gun : MonoBehaviour {
     }
   }
 
-  void Shoot() {
+  private void Shoot() {
     Bullets--;
     muzzleFlash.SetActive(true);
     StartCoroutine(flashDelay());
@@ -85,7 +85,7 @@ public class Gun : MonoBehaviour {
     muzzleFlash.SetActive(false);
   }
 
-  void Reload() {
+  private void Reload() {
     Bullets = Bullets + (maxBullets - Bullets);
     Magazines--;
     canShoot = true;

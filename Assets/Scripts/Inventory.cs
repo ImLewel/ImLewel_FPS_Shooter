@@ -1,14 +1,17 @@
 using UnityEngine;
-using UnityEngine.UI;
+
 public class Inventory : MonoBehaviour {
-  [SerializeField] private float distance;
   [SerializeField] private Camera main;
   [SerializeField] private Transform rHand;
+  [SerializeField] private GameObject stats;
   private MainRayCast rayCaster;
   private GameObject currItem;
-  [SerializeField] private GameObject stats;
-  [SerializeField] private bool canTake = true;
+
   [SerializeField] private int invPos = 0;
+  [SerializeField] private float distance;
+
+  [SerializeField] private bool canTake = true;
+
   public int InvPos {
     get => invPos;
     set {
@@ -60,7 +63,6 @@ public class Inventory : MonoBehaviour {
     prefab.transform.parent = rHand;
     prefab.transform.localPosition = prefab.GetComponent<Gun>().PrefabPos;
     prefab.transform.localRotation = Quaternion.identity;
-    //Destroy(prefab.GetComponent<BoxCollider>());
     prefab.GetComponent<BoxCollider>().enabled = false;
     prefab.GetComponent<Rigidbody>().isKinematic = true;
     DisableNActive();
