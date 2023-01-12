@@ -22,7 +22,7 @@ public class Movement : MonoBehaviour {
   [SerializeField] private float currentSpeed = 5f;
   [SerializeField] private float jumpForce = 10f;
   [SerializeField] private float sensitivity = 1f;
-  [SerializeField] private float crouchOffset = 0.5f;
+  [SerializeField] private float crouchOffset;
 
   private bool canJump;
   private bool crouching;
@@ -111,11 +111,8 @@ public class Movement : MonoBehaviour {
   bool CapsuleChecker() {
     float difference = origPlayerHeight - playerCollider.height;
     float radiusOfOne = difference / 4f; // capsule => 2 sphere => 2 diameters => 4 radius from previous
-
-    Vector3 centerOne = transform.position + Vector3.up * 2f * radiusOfOne;
-    //0.1f reduces height a little because player can stand at 2f but CheckCapsule can collide ceil at 2f too
-    Vector3 centerTwo = transform.position + (Vector3.up * (radiusOfOne - 0.1f)) + (Vector3.up * difference);
-
+    Vector3 centerOne = transform.position + Vector3.up * (transform.position.y + radiusOfOne);
+    Vector3 centerTwo = transform.position + Vector3.up * (transform.position.y + difference - radiusOfOne);
     return Physics.CheckCapsule(centerOne, centerTwo, radiusOfOne, ~LayerMask.GetMask("PlayerLayer"));
   }
 
