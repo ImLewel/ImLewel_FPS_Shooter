@@ -1,16 +1,20 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Inventory : MonoBehaviour {
   [SerializeField] private Camera main;
   [SerializeField] private Transform rHand;
-  [SerializeField] private GameObject stats;
+  private UImanager stats;
   private MainRayCast rayCaster;
+  private Gun gunComponent;
   private GameObject currItem;
 
   [SerializeField] private int invPos = 0;
   [SerializeField] private float distance;
 
   [SerializeField] private bool canTake = true;
+
 
   public int InvPos {
     get => invPos;
@@ -27,6 +31,7 @@ public class Inventory : MonoBehaviour {
   private void Start() {
     main = Camera.main;
     rayCaster = main.GetComponent<MainRayCast>();
+    stats = GameObject.Find("HUD").GetComponent<UImanager>();
   }
 
   void Update() {
@@ -35,7 +40,6 @@ public class Inventory : MonoBehaviour {
       if (rayCaster.Cast(distance)) {
         var currObj = rayCaster.Hit.transform.gameObject;
         if (currObj.isStatic == false) {
-          stats = GameObject.FindWithTag("HUD");
           TakeItem(currObj);
         }
       }
@@ -85,12 +89,11 @@ public class Inventory : MonoBehaviour {
   }
 
   public void DrawInvStats(GameObject item) {
-    if (item != null && item.GetComponent<Gun>() != null && stats != null) {
-      var statsComponent = stats.GetComponent<UImanager>();
-      var gunComponent = item.GetComponent<Gun>();
-      statsComponent.damageLabel.text = $"Damage: {gunComponent.Damage}";
-      statsComponent.bulletsLabel.text = $"Bullets: {gunComponent.Bullets} / {gunComponent.MaxBullets}";
-      statsComponent.magazinesLabel.text = $"Magazines: {gunComponent.Magazines}";
+    gunComponent = item.GetComponent<Gun>();
+    if (item != null && gunComponent != null && stats != null) {
+      stats.damageLabel.text = $"Damage: {gunComponent.Damage}";
+      stats.bulletsLabel.text = $"Bullets: {gunComponent.Bullets} / {gunComponent.MaxBullets}";
+      stats.magazinesLabel.text = $"Magazines: {gunComponent.Magazines}";
     }
   }
 }
