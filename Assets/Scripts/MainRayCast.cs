@@ -1,11 +1,10 @@
 using UnityEngine;
 
 public class MainRayCast : MonoBehaviour {
-  private Ray ray;
-  public Ray Ray { get => ray; set => ray = value; }
+  private Ray UpdateRay => new Ray(transform.position, transform.forward);
+  private RaycastHit hit;
+  public RaycastHit Hit { get => hit; private set => hit = value; }
 
-
-  private void Update() {
-    Ray = new Ray(transform.position, transform.forward);
-  }
+  public bool Cast (float distance) =>
+    Physics.Raycast(UpdateRay, out hit, distance);
 }

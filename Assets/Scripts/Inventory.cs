@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 public class Inventory : MonoBehaviour {
-  RaycastHit hit;
   [SerializeField] private float distance;
   [SerializeField] private Camera main;
   [SerializeField] private Transform rHand;
+  private MainRayCast rayCaster;
   private GameObject currItem;
   [SerializeField] private GameObject stats;
   [SerializeField] private bool canTake = true;
@@ -23,13 +23,14 @@ public class Inventory : MonoBehaviour {
 
   private void Start() {
     main = Camera.main;
+    rayCaster = main.GetComponent<MainRayCast>();
   }
 
   void Update() {
     SwitchItem();
     if (Input.GetKeyDown(KeyCode.F) && canTake) {
-      if (Physics.Raycast(main.transform.GetComponent<MainRayCast>().Ray, out hit, distance)) {
-        var currObj = hit.transform.gameObject;
+      if (rayCaster.Cast(distance)) {
+        var currObj = rayCaster.Hit.transform.gameObject;
         if (currObj.isStatic == false) {
           stats = GameObject.FindWithTag("HUD");
           TakeItem(currObj);

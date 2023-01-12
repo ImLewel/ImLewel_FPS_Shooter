@@ -2,11 +2,11 @@ using System.Collections;
 using UnityEngine;
 
 public class Gun : MonoBehaviour {
-  RaycastHit hit;
   [SerializeField] private Vector3 prefabPos;
 
   [SerializeField] private GameObject muzzleFlash;
   private Camera cam;
+  private MainRayCast rayCaster;
 
   [SerializeField] private int maxBullets;
   [SerializeField] private int damage;
@@ -49,12 +49,16 @@ public class Gun : MonoBehaviour {
     canShoot = Bullets > 0 ? true : false;
     canReload = Magazines > 0 ? true : false;
     muzzleFlashDuration = muzzleFlash.GetComponent<ParticleSystem>().main.duration;
+
   }
   private void Update() {
     if (transform.parent != null) {
-      cam = Camera.main;
+      if (cam == null) {
+        cam = Camera.main;
+        rayCaster = cam.GetComponent<MainRayCast>();
+      }
       if (Time.time > realTimeCooldown) {
-        if (Input.GetKey(KeyCode.Mouse0) && canShoot && cam != null) {
+        if (Input.GetKey(KeyCode.Mouse0) && canShoot) {
           Shoot();
           realTimeCooldown = Time.time + cooldown;
         }
@@ -68,8 +72,8 @@ public class Gun : MonoBehaviour {
     Bullets--;
     muzzleFlash.SetActive(true);
     StartCoroutine(flashDelay());
-    if (Physics.Raycast(cam.transform.GetComponent<MainRayCast>().Ray, out hit, distance)) {
-      var currEnemy = hit.transform.gameObject.GetComponent<Enemy>();
+    if (rayCaster.Cast(distance)) {
+      var currEnemy = rayCaster.Hit.transform.gameObject.GetComponent<Enemy>();
       if (currEnemy != null) {
         currEnemy.Health = currEnemy.Health - damage;
       }
