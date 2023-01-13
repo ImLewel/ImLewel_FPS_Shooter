@@ -7,33 +7,34 @@ public class Movement : MonoBehaviour {
   private Vector3 PlayerMovementInput;
   private Vector2 PlayerMouseInput;
   private Vector3 MoveVector;
+  private Quaternion deltaRotation;
 
+  [SerializeField] private Transform rArm;
   private Camera main;
   private GameObject player;
   private CapsuleCollider playerCollider;
   private Rigidbody rb;
   private Transform body;
-  [SerializeField] private Transform rArm;
   private Slider stamina;
 
+  private Coroutine cor;
+
   private float origPlayerHeight;
+  private float rotX;
+  private float rotY;
   [SerializeField] private float speed = 5f;
   [SerializeField] private float sprintSpeed = 7f;
   [SerializeField] private float currentSpeed = 5f;
   [SerializeField] private float jumpForce = 10f;
-  [SerializeField] private float sensitivity = 1f;
+  [SerializeField] private float sensitivity = 100f;
   [SerializeField] private float crouchOffset;
 
   private bool canJump;
   private bool crouching;
   private bool grounded;
-
-  private Coroutine cor;
-
-  private float rotX;
-  private float rotY;
-
+  
   Dictionary<Transform, Vector3> originalChildPositions = new();
+
   void Start() {
     Cursor.lockState = CursorLockMode.Locked;
     player = transform.gameObject;
@@ -43,6 +44,10 @@ public class Movement : MonoBehaviour {
     main = Camera.main;
     body = transform.Find("Body");
     stamina = GameObject.Find("HUD").GetComponent<UImanager>().progressBar;
+  }
+
+  private void Awake() {
+    StartCoroutine(RotatePlayer());
   }
 
   void Update() {
@@ -57,11 +62,18 @@ public class Movement : MonoBehaviour {
     rotX -= PlayerMouseInput.y * sensitivity * Time.deltaTime;
     rotX = Mathf.Clamp(rotX, -90f, 90f);
 
-    rotY = PlayerMouseInput.x * sensitivity * Time.deltaTime;
-
-    player.transform.Rotate(0f, rotY, 0f);
     main.transform.localRotation = Quaternion.Euler(rotX, 0f, 0f);
     rArm.transform.localRotation = main.transform.localRotation;
+  }
+
+  IEnumerator RotatePlayer() {
+    YieldInstruction waitForFixedUpdate = new WaitForFixedUpdate();
+    while (true) {
+      yield return waitForFixedUpdate;
+      rotY = PlayerMouseInput.x * sensitivity;
+      deltaRotation = Quaternion.Euler(0f, rotY * Time.fixedDeltaTime, 0f);
+      rb.MoveRotation(rb.rotation * deltaRotation);
+    }
   }
 
   private void Move() {
@@ -162,5 +174,4 @@ public class Movement : MonoBehaviour {
       canJump = false;
     }
   }
-
 }
