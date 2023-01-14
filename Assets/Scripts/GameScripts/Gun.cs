@@ -86,7 +86,7 @@ public class Gun : MonoBehaviour {
   }
 
   private void Reload() {
-    Bullets = Bullets + (maxBullets - Bullets);
+    Bullets = maxBullets;
     Magazines--;
     canShoot = true;
   }
