@@ -24,6 +24,7 @@ public class Movement : MonoBehaviour {
   private float rotY;
   [SerializeField] private float speed = 5f;
   [SerializeField] private float sprintSpeed = 7f;
+  [SerializeField] private float crouchSpeed = 3f;
   [SerializeField] private float currentSpeed = 5f;
   [SerializeField] private float jumpForce = 10f;
   [SerializeField] private float sensitivity = 100f;
@@ -146,6 +147,7 @@ public class Movement : MonoBehaviour {
         originalChildPositions.Add(child, child.localPosition);
 
       if (state) {
+        currentSpeed = crouchSpeed;
         if (child == body && child.localScale.y != _offset) {
           child.localScale = new Vector3(child.localScale.x, child.localScale.y * _offset, child.localScale.z);
           playerCollider.height *= _offset;
