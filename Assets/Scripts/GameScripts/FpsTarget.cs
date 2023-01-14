@@ -1,15 +1,21 @@
 using UnityEngine;
 
 public class FpsTarget : MonoBehaviour {
-  [SerializeField] private int target = 120;
+  public int target = 144;
 
-  void Awake() {
+  private void Awake() {
     QualitySettings.vSyncCount = 0;
     Application.targetFrameRate = target;
   }
 
-  void Update() {
+  private void Start() {
+    DontDestroyOnLoad(gameObject);
+  }
+
+  private void Update() {
     if (Application.targetFrameRate != target)
       Application.targetFrameRate = target;
   }
+
+  public void UpdateValue(int num) => QualitySettings.vSyncCount = num;
 }
