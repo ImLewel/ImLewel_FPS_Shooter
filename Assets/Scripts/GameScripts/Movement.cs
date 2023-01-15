@@ -33,8 +33,13 @@ public class Movement : MonoBehaviour {
   private bool canJump;
   private bool crouching;
   private bool grounded;
-  
-  Dictionary<Transform, Vector3> originalChildPositions = new();
+
+  private Dictionary<string, float> StaminaVars = new() {
+    ["recover"] = 0.15f,
+    ["run"] = 0.1f,
+    ["jump"] = 0.25f,
+  };
+  private Dictionary<Transform, Vector3> originalChildPositions = new();
 
   void Start() {
     Cursor.lockState = CursorLockMode.Locked;
@@ -54,7 +59,7 @@ public class Movement : MonoBehaviour {
   void Update() {
     PlayerMovementInput = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
     PlayerMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-    grounded = isGrounded(player, playerCollider);
+    grounded = isGrounded(player, playerCollider, 0.1f);
     Move();
     MoveCamera();
   }
@@ -85,16 +90,16 @@ public class Movement : MonoBehaviour {
       currentSpeed = sprintSpeed;
       if (cor != null)
         StopCoroutine(cor);
-      cor = StartCoroutine(StaminaDelay(0.1f, 0f));
+      cor = StartCoroutine(StaminaDelay(StaminaVars["run"], 0f));
     }
     else {
       currentSpeed = speed;
       if (cor != null)
         StopCoroutine(cor);
-      cor = StartCoroutine(StaminaDelay(0.15f, 1f));
+      cor = StartCoroutine(StaminaDelay(StaminaVars["recover"], 1f));
     }
 
-    if (Input.GetKeyDown(KeyCode.Space) && grounded && stamina.value >= 0.25f) 
+    if (Input.GetKeyDown(KeyCode.Space) && grounded && stamina.value >= StaminaVars["jump"]) 
       canJump = true;
 
     if (Input.GetKey(KeyCode.LeftControl)) crouching = true;
@@ -129,14 +134,14 @@ public class Movement : MonoBehaviour {
     return Physics.CheckCapsule(centerOne, centerTwo, radiusOfOne, ~LayerMask.GetMask("PlayerLayer"));
   }
 
-  bool isGrounded(GameObject obj, Collider collider) =>
-    Physics.Raycast(obj.transform.position, -obj.transform.up, collider.bounds.extents.y + 0.1f);
-  //0.1f extends raycast a little further to check outer surface
+  bool isGrounded(GameObject obj, Collider collider, float offset) =>
+    Physics.Raycast(obj.transform.position, -obj.transform.up, collider.bounds.extents.y + offset);
+  //offset extends raycast a little further to check outer surface
 
   void Jump() {
     if (cor != null) StopCoroutine(cor);
     rb.AddForce(0, jumpForce, 0, ForceMode.Impulse);
-    stamina.value -= 0.25f;
+    stamina.value -= StaminaVars["jump"];
   }
 
   void CrouchState(bool state, float _offset) {
