@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class SettingsManager : MonoBehaviour {
   private FpsTarget fpsManager;
   private void Awake() {
-      fpsManager = GameObject.Find("SceneMod").GetComponent<FpsTarget>();
+    fpsManager = GameObject.Find("SceneMod").GetComponent<FpsTarget>();
   }
   public void OnVSyncBtnClicked() {
     if (QualitySettings.vSyncCount != 1)

@@ -12,7 +12,7 @@ public class ButtonManager : MonoBehaviour {
   public void OnPlayBtnClicked() => SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
   public void OnQuitBtnClicked() => Application.Quit();
   public void OnSettingsBtnClicked() {
-    if (settings.active) settings.SetActive(false);
+    if (settings.activeInHierarchy) settings.SetActive(false);
     else settings.SetActive(true);
   }
 }
