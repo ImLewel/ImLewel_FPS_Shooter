@@ -38,8 +38,8 @@ public class Inventory : MonoBehaviour {
     SwitchItem();
     if (Input.GetKeyDown(KeyCode.F) && canTake) {
       if (rayCaster.Cast(distance)) {
-        var currObj = rayCaster.Hit.transform.gameObject;
-        if (currObj.isStatic == false) {
+        GameObject currObj = rayCaster.Hit.transform.gameObject;
+        if (currObj.GetComponent<TakeableObj>() != null) {
           TakeItem(currObj);
         }
       }
