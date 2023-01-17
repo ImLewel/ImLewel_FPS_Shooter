@@ -33,6 +33,7 @@ public class Movement : MonoBehaviour {
   private bool canJump;
   private bool crouching;
   private bool grounded;
+  private bool standing = true;
 
   private Dictionary<string, float> StaminaVars = new() {
     ["recover"] = 0.15f,
@@ -59,7 +60,7 @@ public class Movement : MonoBehaviour {
   void Update() {
     PlayerMovementInput = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
     PlayerMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-    grounded = isGrounded(player, playerCollider, 0.1f);
+    grounded = isGrounded(player, 0.1f);
     Move();
     MoveCamera();
   }
@@ -104,12 +105,15 @@ public class Movement : MonoBehaviour {
 
     if (Input.GetKey(KeyCode.LeftControl)) crouching = true;
 
-    if (crouching) CrouchState(true, crouchOffset);
+    if (crouching) {
+      standing = false;
+      CrouchState(true, crouchOffset);
+    }
 
     if (!Input.GetKey(KeyCode.LeftControl) && crouching)
       if (!CapsuleChecker()) crouching = false;
 
-    if (!crouching) CrouchState(false, crouchOffset);
+    if (!crouching && !standing) CrouchState(false, crouchOffset);
   }
 
   IEnumerator StaminaDelay(float rate, float barrier) {
@@ -129,14 +133,14 @@ public class Movement : MonoBehaviour {
   bool CapsuleChecker() {
     float difference = origPlayerHeight - playerCollider.height;
     float radiusOfOne = difference / 4f; // capsule => 2 sphere => 2 diameters => 4 radius from previous
-    Vector3 centerOne = transform.position + Vector3.up * (transform.position.y + radiusOfOne);
-    Vector3 centerTwo = transform.position + Vector3.up * (transform.position.y + difference - radiusOfOne);
+    Vector3 centerOne = transform.position + Vector3.up * (playerCollider.height + radiusOfOne);
+    Vector3 centerTwo = transform.position + Vector3.up * (playerCollider.height + difference - radiusOfOne);
     return Physics.CheckCapsule(centerOne, centerTwo, radiusOfOne, ~LayerMask.GetMask("PlayerLayer"));
   }
 
-  bool isGrounded(GameObject obj, Collider collider, float offset) =>
-    Physics.Raycast(obj.transform.position, -obj.transform.up, collider.bounds.extents.y + offset);
-  //offset extends raycast a little further to check outer surface
+  bool isGrounded(GameObject obj, float offset) =>
+    Physics.Raycast(obj.transform.position + Vector3.up * offset, -obj.transform.up, offset * 2f);
+    //offset extends raycast a little further to check outer surface
 
   void Jump() {
     if (cor != null) StopCoroutine(cor);
@@ -146,7 +150,6 @@ public class Movement : MonoBehaviour {
 
   void CrouchState(bool state, float _offset) {
     Vector3 newPosition;
-
     foreach (Transform child in transform) {
       if (!originalChildPositions.ContainsKey(child)) 
         originalChildPositions.Add(child, child.localPosition);
@@ -154,8 +157,9 @@ public class Movement : MonoBehaviour {
       if (state) {
         currentSpeed = crouchSpeed;
         if (child == body && child.localScale.y != _offset) {
-          child.localScale = new Vector3(child.localScale.x, child.localScale.y * _offset, child.localScale.z);
           playerCollider.height *= _offset;
+          playerCollider.center = Vector3.up * _offset;
+          child.localScale = new Vector3(child.localScale.x, child.localScale.y * _offset, child.localScale.z);
         }
         newPosition = new Vector3(
             originalChildPositions[child].x,
@@ -165,10 +169,12 @@ public class Movement : MonoBehaviour {
       }
       else {
         if (child == body && playerCollider.height != origPlayerHeight) {
-          child.localScale = new Vector3(child.localScale.x, child.localScale.y * (1f / _offset), child.localScale.z);
           playerCollider.height *= (1f / _offset);
+          playerCollider.center = Vector3.up;
+          child.localScale = new Vector3(child.localScale.x, child.localScale.y * (1f / _offset), child.localScale.z);
         }
         newPosition = originalChildPositions[child];
+        standing = true;
       }
         
       child.localPosition = newPosition;
