@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine;
 
 public class Movement : MonoBehaviour {
-  private Vector3 PlayerMovementInput;
+  private Vector3 playerInput;
   private Vector2 PlayerMouseInput;
   private Vector3 MoveVector;
   private Quaternion deltaRotation;
@@ -22,11 +22,11 @@ public class Movement : MonoBehaviour {
   private float origPlayerHeight;
   private float rotX;
   private float rotY;
-  [SerializeField] private float speed = 5f;
-  [SerializeField] private float sprintSpeed = 7f;
-  [SerializeField] private float crouchSpeed = 3f;
-  [SerializeField] private float currentSpeed = 5f;
-  [SerializeField] private float jumpForce = 10f;
+  private const float walkSpeed = 5f;
+  private const float sprintSpeed = 7f;
+  private const float crouchSpeed = 3f;
+  private const float jumpForce = 10f;
+  private float currentSpeed = walkSpeed;
   [SerializeField] private float sensitivity = 100f;
   [SerializeField] private float crouchOffset;
 
@@ -58,9 +58,9 @@ public class Movement : MonoBehaviour {
   }
 
   void Update() {
-    PlayerMovementInput = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+    playerInput = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
     PlayerMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-    grounded = isGrounded(player, 0.1f);
+    grounded = isGrounded(player, offset: 0.1f);
     Move();
     MoveCamera();
   }
@@ -84,17 +84,17 @@ public class Movement : MonoBehaviour {
   }
 
   private void Move() {
-    MoveVector = transform.TransformDirection(PlayerMovementInput) * currentSpeed;
+    MoveVector = transform.TransformDirection(playerInput) * currentSpeed;
     rb.velocity = new Vector3(MoveVector.x, rb.velocity.y, MoveVector.z);
 
-    if (Input.GetKey(KeyCode.LeftShift) && grounded && !crouching && stamina.value > stamina.minValue && PlayerMovementInput != Vector3.zero) {
+    if (Input.GetKey(KeyCode.LeftShift) && grounded && standing && stamina.value > 0f && playerInput != Vector3.zero) {
       currentSpeed = sprintSpeed;
       if (cor != null)
         StopCoroutine(cor);
       cor = StartCoroutine(StaminaDelay(StaminaVars["run"], 0f));
     }
     else {
-      currentSpeed = speed;
+      currentSpeed = walkSpeed;
       if (cor != null)
         StopCoroutine(cor);
       cor = StartCoroutine(StaminaDelay(StaminaVars["recover"], 1f));
