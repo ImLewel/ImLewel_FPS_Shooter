@@ -1,5 +1,5 @@
 # FPS Shooter by ImLewel
-It is simple shooter written in ```C#```, created in ```Unity```, nothing to add now ;)
+It is simple indie shooter written in ```C#```, created in ```Unity```, nothing to add now ;)
 # Plans on project
 * Bot's logic
 * Vehicles
@@ -17,6 +17,7 @@ It is simple shooter written in ```C#```, created in ```Unity```, nothing to add
 * ```WASD``` - move player
 * ```Left control``` - crouch
 * ```Space``` - jump
+* ```Left shift``` - sprint
 * ```Left mouse button``` - shoot
 * ```F``` - take item
 * ```G``` - drop item
