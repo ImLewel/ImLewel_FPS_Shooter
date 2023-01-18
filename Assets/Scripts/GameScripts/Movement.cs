@@ -25,7 +25,7 @@ public class Movement : MonoBehaviour {
   private const float walkSpeed = 5f;
   private const float sprintSpeed = 7f;
   private const float crouchSpeed = 3f;
-  private const float jumpForce = 10f;
+  private const float jumpForce = 5f;
   private float currentSpeed = walkSpeed;
   [SerializeField] private float sensitivity = 100f;
   [SerializeField] private float crouchOffset;
