@@ -103,15 +103,14 @@ public class Movement : MonoBehaviour {
     if (Input.GetKeyDown(KeyCode.Space) && grounded && stamina.value >= StaminaVars["jump"]) 
       canJump = true;
 
-    if (Input.GetKey(KeyCode.LeftControl)) crouching = true;
-
-    if (crouching) {
+    if (Input.GetKey(KeyCode.LeftControl)) {
+      crouching = true;
       standing = false;
       CrouchState(true, crouchOffset);
     }
 
     if (!Input.GetKey(KeyCode.LeftControl) && crouching)
-      if (!CapsuleChecker()) crouching = false;
+      if (!CeilChecker()) crouching = false;
 
     if (!crouching && !standing) CrouchState(false, crouchOffset);
   }
@@ -130,7 +129,7 @@ public class Movement : MonoBehaviour {
     }
   }
 
-  bool CapsuleChecker() {
+  bool CeilChecker() {
     float difference = origPlayerHeight - playerCollider.height;
     float radiusOfOne = difference / 4f; // capsule => 2 sphere => 2 diameters => 4 radius from previous
     Vector3 centerOne = transform.position + Vector3.up * (playerCollider.height + radiusOfOne);
