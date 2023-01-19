@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UImanager : MonoBehaviour {
-  public Text bulletsLabel;
-  [SerializeField] public Text damageLabel;
-  [SerializeField] public Text magazinesLabel;
-  [SerializeField] public Slider progressBar;
+  public TextMeshProUGUI bulletsLabel;
+  public TextMeshProUGUI damageLabel;
+  public TextMeshProUGUI magazinesLabel;
+  public Slider progressBar;
 }
