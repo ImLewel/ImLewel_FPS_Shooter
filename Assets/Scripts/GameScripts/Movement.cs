@@ -41,6 +41,11 @@ public class Movement : MonoBehaviour {
     ["jump"] = 0.25f,
   };
   private Dictionary<Transform, Vector3> originalChildPositions = new();
+  private enum StrafeDir {
+    Left,
+    Right,
+    None,
+  }
 
   void Start() {
     Cursor.lockState = CursorLockMode.Locked;
@@ -113,6 +118,31 @@ public class Movement : MonoBehaviour {
       if (!CeilChecker()) crouching = false;
 
     if (!crouching && !standing) CrouchState(false, crouchOffset);
+
+    if (Input.GetKey(KeyCode.Q))
+      Strafe(StrafeDir.Left);
+    else if (Input.GetKey(KeyCode.E))
+      Strafe(StrafeDir.Right);
+    if (Input.GetKeyUp(KeyCode.Q) || Input.GetKeyUp(KeyCode.E))
+      Strafe(StrafeDir.None);
+  }
+
+  private void Strafe(StrafeDir dir) {
+    Quaternion quat = new();
+    switch (dir) {
+      case StrafeDir.Left:
+        quat = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, 20f);
+        Mathf.Clamp(quat.z, 0f, 20f);
+        break;
+      case StrafeDir.Right:
+        quat = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, -20f);
+        Mathf.Clamp(quat.z, -20f, 0f);
+        break;
+      case StrafeDir.None:
+        quat = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, 0f);
+        break;
+    };
+    rb.MoveRotation(quat);
   }
 
   IEnumerator StaminaDelay(float rate, float barrier) {
