@@ -1,18 +1,28 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class SettingsManager : MonoBehaviour {
-  private FpsTarget fpsManager;
-  private void Awake() {
-    fpsManager = GameObject.Find("SceneMod").GetComponent<FpsTarget>();
+  private TMP_Dropdown QualityDropdown;
+  private Slider FpsSlider;
+  private void Start() {
+    QualityDropdown = transform.Find("QualityDropdown").GetComponent<TMP_Dropdown>();
+    FpsSlider = transform.Find("FpsSlider").GetComponent<Slider>();
+    ChangeFps();
   }
   public void OnVSyncBtnClicked() {
     if (QualitySettings.vSyncCount != 1)
-      fpsManager.UpdateValue(0);
+      QualitySettings.vSyncCount = 1;
     else
-      fpsManager.UpdateValue(1);
+      QualitySettings.vSyncCount = 0;
   }
-  public void OnFpsSliderValueChange() {
-    fpsManager.target = (int)gameObject.GetComponent<Slider>().value;
+  public void ChangeFps() {
+    Application.targetFrameRate = (int)FpsSlider.value;
   }
+
+  public void ChangeQuality() {
+    QualitySettings.SetQualityLevel(QualityDropdown.value, true);
+    Application.targetFrameRate = (int)FpsSlider.value;
+  }
+
 }
