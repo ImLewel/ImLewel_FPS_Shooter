@@ -21,6 +21,8 @@ It is simple indie shooter written in ```C#```, created in ```Unity```, nothing 
 * ```Left mouse button``` - shoot
 * ```F``` - take item
 * ```G``` - drop item
+* ```Q``` - strafe left
+* ```E``` - strafe right
 
 Test build(s) will be added soon!
 
