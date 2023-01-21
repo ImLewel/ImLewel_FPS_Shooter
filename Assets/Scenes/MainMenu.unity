@@ -132,6 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 62525234}
+  - component: {fileID: 62525235}
   m_Layer: 5
   m_Name: SettingsHolder
   m_TagString: Untagged
@@ -163,6 +164,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &62525235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 62525233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14be40d3103ad8745aa7f0ca5dc2c152, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &77161634
 GameObject:
   m_ObjectHideFlags: 0
@@ -631,7 +644,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Low
+  m_text: Ultra
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 894bc511ad7b6ac4fad6111552093dcf, type: 2}
@@ -1705,7 +1718,6 @@ GameObject:
   m_Component:
   - component: {fileID: 745117404}
   - component: {fileID: 745117405}
-  - component: {fileID: 745117406}
   m_Layer: 5
   m_Name: FpsSlider
   m_TagString: Untagged
@@ -1788,9 +1800,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 745117406}
+      - m_Target: {fileID: 62525235}
         m_TargetAssemblyTypeName: SettingsManager, Assembly-CSharp
-        m_MethodName: OnFpsSliderValueChange
+        m_MethodName: ChangeFps
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1800,18 +1812,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 1
---- !u!114 &745117406
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 745117403}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14be40d3103ad8745aa7f0ca5dc2c152, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &745913077
 GameObject:
   m_ObjectHideFlags: 0
@@ -2670,8 +2670,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -312.9, y: 357}
-  m_SizeDelta: {x: 160, y: 50}
+  m_AnchoredPosition: {x: -219, y: 357}
+  m_SizeDelta: {x: 331.358, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1263794971
 MonoBehaviour:
@@ -2723,15 +2723,33 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: Low
+    - m_Text: Ultra
       m_Image: {fileID: 0}
-    - m_Text: Medium
+    - m_Text: Very High
       m_Image: {fileID: 0}
     - m_Text: High
       m_Image: {fileID: 0}
+    - m_Text: Medium
+      m_Image: {fileID: 0}
+    - m_Text: Low
+      m_Image: {fileID: 0}
+    - m_Text: Very Low
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 62525235}
+        m_TargetAssemblyTypeName: SettingsManager, Assembly-CSharp
+        m_MethodName: ChangeQuality
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
   m_AlphaFadeSpeed: 0.15
 --- !u!114 &1263794972
 MonoBehaviour:
@@ -3800,7 +3818,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 32.99997, y: 67}
+  m_AnchoredPosition: {x: -62, y: 67}
   m_SizeDelta: {x: 150, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1677156536
@@ -3823,7 +3841,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Quality settings (currently not working)
+  m_text: 'Quality settings
 
 '
   m_isRightToLeft: 0
@@ -4025,7 +4043,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1923702290}
   - component: {fileID: 1923702291}
-  - component: {fileID: 1923702292}
   m_Layer: 5
   m_Name: VSyncToggle
   m_TagString: Untagged
@@ -4102,7 +4119,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1923702292}
+      - m_Target: {fileID: 62525235}
         m_TargetAssemblyTypeName: SettingsManager, Assembly-CSharp
         m_MethodName: OnVSyncBtnClicked
         m_Mode: 1
@@ -4115,18 +4132,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 1
   m_IsOn: 0
---- !u!114 &1923702292
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1923702289}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14be40d3103ad8745aa7f0ca5dc2c152, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1952421400
 GameObject:
   m_ObjectHideFlags: 0
