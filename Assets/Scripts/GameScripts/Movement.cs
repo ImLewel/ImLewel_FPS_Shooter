@@ -128,20 +128,14 @@ public class Movement : MonoBehaviour {
   }
 
   private void Strafe(StrafeDir dir) {
-    Quaternion quat = new();
-    switch (dir) {
-      case StrafeDir.Left:
-        quat = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, 20f);
-        Mathf.Clamp(quat.z, 0f, 20f);
-        break;
-      case StrafeDir.Right:
-        quat = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, -20f);
-        Mathf.Clamp(quat.z, -20f, 0f);
-        break;
-      case StrafeDir.None:
-        quat = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, 0f);
-        break;
-    };
+    Quaternion quat;
+    float angle = 20f;
+
+    if (dir == StrafeDir.Right) angle = -angle;
+    else if (dir == StrafeDir.None) angle = 0f;
+
+    quat = Quaternion.Euler(0, transform.eulerAngles.y, angle);
+    Mathf.Clamp(quat.z, -20f, 20f);
     rb.MoveRotation(quat);
   }
 
@@ -161,7 +155,7 @@ public class Movement : MonoBehaviour {
 
   bool CeilChecker() {
     float difference = origPlayerHeight - playerCollider.height;
-    float radiusOfOne = difference / 4f; // capsule => 2 sphere => 2 diameters => 4 radius from previous
+    float radiusOfOne = difference / 4f;
     Vector3 centerOne = transform.position + Vector3.up * (playerCollider.height + radiusOfOne);
     Vector3 centerTwo = transform.position + Vector3.up * (playerCollider.height + difference - radiusOfOne);
     return Physics.CheckCapsule(centerOne, centerTwo, radiusOfOne, ~LayerMask.GetMask("PlayerLayer"));
@@ -169,7 +163,6 @@ public class Movement : MonoBehaviour {
 
   bool isGrounded(GameObject obj, float offset) =>
     Physics.Raycast(obj.transform.position + Vector3.up * offset, -obj.transform.up, offset * 2f);
-    //offset extends raycast a little further to check outer surface
 
   void Jump() {
     if (cor != null) StopCoroutine(cor);
