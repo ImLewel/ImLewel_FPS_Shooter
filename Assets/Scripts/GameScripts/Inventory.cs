@@ -49,12 +49,8 @@ public class Inventory : MonoBehaviour {
   }
 
   public void SwitchItem() {
-    if (Input.mouseScrollDelta.y != 0) {
-      if (Input.GetAxis("Mouse ScrollWheel") > 0f)
-        InvPos += 1;
-      else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
-        InvPos -= 1;
-    }
+    if (Input.mouseScrollDelta.y != 0)
+      InvPos = Input.GetAxis("Mouse ScrollWheel") > 0f ? ++InvPos : --InvPos;
     else if (rHand.childCount >= 1) {
       currItem = rHand.GetChild(InvPos).gameObject;
       currItem.SetActive(true);

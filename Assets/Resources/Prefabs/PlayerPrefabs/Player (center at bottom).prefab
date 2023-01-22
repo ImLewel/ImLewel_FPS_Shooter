@@ -281,11 +281,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rArm: {fileID: 3862462709247363664}
-  speed: 5
-  sprintSpeed: 7
-  crouchSpeed: 3
-  currentSpeed: 5
-  jumpForce: 5
   sensitivity: 100
   crouchOffset: 0.75
 --- !u!136 &3862462709695524318
