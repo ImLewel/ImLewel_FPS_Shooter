@@ -5100,6 +5100,7 @@ Transform:
   - {fileID: 5260240577682380632}
   - {fileID: 19137455472737778}
   - {fileID: 5890891780384477125}
+  - {fileID: 3131594926414808977}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5117,6 +5118,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabPos: {x: 0, y: 0.176, z: 0.171}
   muzzleFlash: {fileID: 4641774771668926874}
+  compMags: {fileID: 11400000, guid: 5e135a6a298752945b162038fe6785a1, type: 2}
   maxBullets: 20
   damage: 5
   bullets: 20
@@ -5124,6 +5126,7 @@ MonoBehaviour:
   distance: 10
   muzzleFlashDuration: 0
   cooldown: 0.2
+  weaponKind: 1
 --- !u!65 &7747763384274389957
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5165,6 +5168,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4ea5b87eb9b1a24f944414d450703db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &6231546621199721597
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3131594926414808977}
+  m_Layer: 0
+  m_Name: MagPlace
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3131594926414808977
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6231546621199721597}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.002699852, y: -0.14600003, z: -0.123999596}
+  m_LocalScale: {x: 0.036751255, y: 0.25530785, z: 0.05908612}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1315278872409067871}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7853774224487832491
 GameObject:
   m_ObjectHideFlags: 0

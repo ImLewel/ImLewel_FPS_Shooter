@@ -6,6 +6,7 @@ TagManager:
   tags:
   - HUD
   - TextManager
+  - Mag
   layers:
   - Default
   - TransparentFX

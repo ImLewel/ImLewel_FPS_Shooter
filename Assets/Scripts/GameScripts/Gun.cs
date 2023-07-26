@@ -1,12 +1,16 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Gun : MonoBehaviour {
   [SerializeField] private Vector3 prefabPos;
 
   [SerializeField] private GameObject muzzleFlash;
+  [SerializeField] private CompatibleMags compMags;
   private Camera cam;
   private MainRayCast rayCaster;
+  private GameObject magPlace;
+  private GameObject mag;
 
   [SerializeField] private int maxBullets;
   [SerializeField] private int damage;
@@ -20,6 +24,8 @@ public class Gun : MonoBehaviour {
   private bool canShoot;
   private bool canReload;
   public Vector3 PrefabPos { get => prefabPos; }
+  [SerializeField]
+  private CompatibleMags.WeaponKind weaponKind;
 
   public int Damage { get => damage; }
   public int MaxBullets { get => maxBullets; }
@@ -49,7 +55,10 @@ public class Gun : MonoBehaviour {
     canShoot = Bullets > 0 ? true : false;
     canReload = Magazines > 0 ? true : false;
     muzzleFlashDuration = muzzleFlash.GetComponent<ParticleSystem>().main.duration;
-
+    magPlace = transform.Find("MagPlace").gameObject;
+    mag = GameObject.FindWithTag("Mag");
+    compMags.Create();
+    FindMag();
   }
   private void Update() {
     if (transform.parent != null) {
@@ -86,8 +95,32 @@ public class Gun : MonoBehaviour {
   }
 
   private void Reload() {
+    if (mag is not null)
+    {
+      mag.AddComponent<Rigidbody>();
+      mag.transform.SetParent(null);
+      mag.GetComponent<BoxCollider>().enabled = true;
+    }
+    GameObject newMag = compMags.list[weaponKind][0].gameObject;
+    GameObject.Instantiate(newMag, transform);
+    mag = newMag;
+    //mag.transform.SetParent(gameObject.transform);
     Bullets = maxBullets;
     Magazines--;
     canShoot = true;
+    FindMag();
+  }
+
+  private void FindMag()
+  {
+    foreach (Transform t in transform)
+    {
+      if (t.tag == "Mag")
+      {
+        mag = t.gameObject;
+        return;
+      }
+    }
+    mag = null;
   }
 }
