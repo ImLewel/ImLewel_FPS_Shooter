@@ -2,18 +2,17 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine;
+using Unity.VisualScripting;
+using System.Threading.Tasks;
 
 public class Movement : MonoBehaviour {
   private Vector3 playerInput;
   private Vector2 PlayerMouseInput;
-  private Vector3 MoveVector;
-  private Quaternion deltaRotation;
 
   [SerializeField] private Transform rArm;
   private Camera main;
   private GameObject player;
-  private CapsuleCollider playerCollider;
-  private Rigidbody rb;
+  private CharacterController playerCollider;
   private Transform body;
   private Slider stamina;
 
@@ -25,14 +24,22 @@ public class Movement : MonoBehaviour {
   private const float walkSpeed = 5f;
   private const float sprintSpeed = 7f;
   private const float crouchSpeed = 3f;
-  private const float jumpForce = 5f;
+  [SerializeField]
+  private float jumpForce = 5f;
+  [SerializeField]
+  private float gravity = 8f;
+  [SerializeField]
+  private float maxJumpHeight = 1f;
   private float currentSpeed = walkSpeed;
   [SerializeField] private float sensitivity = 100f;
   [SerializeField] private float crouchOffset;
+  private float yPosBeforeJump;
 
   private bool canJump;
   private bool crouching;
+  [SerializeField]
   private bool grounded;
+  private bool jumping;
   private bool standing = true;
 
   private Dictionary<string, float> StaminaVars = new() {
@@ -50,47 +57,35 @@ public class Movement : MonoBehaviour {
   void Start() {
     Cursor.lockState = CursorLockMode.Locked;
     player = transform.gameObject;
-    rb = player.GetComponent<Rigidbody>();
-    playerCollider = player.GetComponent<CapsuleCollider>();
+    playerCollider = player.GetComponent<CharacterController>();
     origPlayerHeight = playerCollider.height;
     main = Camera.main;
     body = transform.Find("Body");
     stamina = GameObject.Find("HUD").GetComponent<UImanager>().progressBar;
-  }
-
-  private void Awake() {
-    StartCoroutine(RotatePlayer());
+    yPosBeforeJump = transform.position.y;
   }
 
   void Update() {
     playerInput = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
     PlayerMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-    grounded = isGrounded(player, offset: 0.1f);
-    Move();
+    grounded = playerCollider.isGrounded;//isGrounded(player, offset: 0.1f);
     MoveCamera();
+    Move();
   }
 
   void MoveCamera() {
     rotX -= PlayerMouseInput.y * sensitivity * Time.deltaTime;
     rotX = Mathf.Clamp(rotX, -90f, 90f);
 
+    rotY += PlayerMouseInput.x * sensitivity * Time.deltaTime;
+
     main.transform.localRotation = Quaternion.Euler(rotX, 0f, 0f);
     rArm.transform.localRotation = main.transform.localRotation;
-  }
 
-  IEnumerator RotatePlayer() {
-    YieldInstruction waitForFixedUpdate = new WaitForFixedUpdate();
-    while (true) {
-      yield return waitForFixedUpdate;
-      rotY = PlayerMouseInput.x * sensitivity;
-      deltaRotation = Quaternion.Euler(0f, rotY * Time.fixedDeltaTime, 0f);
-      rb.MoveRotation(rb.rotation * deltaRotation);
-    }
+    transform.localRotation = Quaternion.Euler(0f, rotY, 0f);
   }
 
   private void Move() {
-    MoveVector = transform.TransformDirection(playerInput) * currentSpeed;
-    rb.velocity = new Vector3(MoveVector.x, rb.velocity.y, MoveVector.z);
 
     if (Input.GetKey(KeyCode.LeftShift) && grounded && standing && stamina.value > 0f && playerInput != Vector3.zero) {
       currentSpeed = sprintSpeed;
@@ -104,9 +99,29 @@ public class Movement : MonoBehaviour {
         StopCoroutine(cor);
       cor = StartCoroutine(StaminaDelay(StaminaVars["recover"], 1f));
     }
+    
+    Debug.Log(playerInput.magnitude);
+    if (playerInput.magnitude > 1f)
+      playerInput.Normalize();
+    playerCollider.Move(transform.TransformDirection(playerInput) * currentSpeed * Time.deltaTime);
 
-    if (Input.GetKeyDown(KeyCode.Space) && grounded && stamina.value >= StaminaVars["jump"]) 
+/*    if (stamina.value >= StaminaVars["jump"] && grounded)
       canJump = true;
+    if (canJump && Input.GetKeyDown(KeyCode.Space))
+    {
+      jumping = true;
+      yPosBeforeJump = transform.position.y;
+      canJump = false;
+    }
+    if (transform.position.y <= yPosBeforeJump + maxJumpHeight && jumping)
+      playerCollider.Move((transform.up + playerInput).normalized * Time.deltaTime * jumpForce);
+    else
+      jumping = false;
+    if (!grounded && !jumping)
+    {
+      canJump = false;
+      playerCollider.Move((-transform.up + playerInput).normalized * Time.deltaTime * gravity);
+    }*/
 
     if (Input.GetKey(KeyCode.LeftControl)) {
       crouching = true;
@@ -131,12 +146,15 @@ public class Movement : MonoBehaviour {
     Quaternion quat;
     float angle = 20f;
 
-    if (dir == StrafeDir.Right) angle = -angle;
-    else if (dir == StrafeDir.None) angle = 0f;
+    if (dir == StrafeDir.Right)
+      angle = -angle;
+    else if (dir == StrafeDir.None)
+      angle = 0f;
 
-    quat = Quaternion.Euler(0, transform.eulerAngles.y, angle);
+    quat = Quaternion.Euler(0f, 0f, angle);
     Mathf.Clamp(quat.z, -20f, 20f);
-    rb.MoveRotation(quat);
+    Mathf.Clamp(angle, -20f, 20f);
+    transform.Rotate(transform.forward, angle, Space.World);
   }
 
   IEnumerator StaminaDelay(float rate, float barrier) {
@@ -166,7 +184,7 @@ public class Movement : MonoBehaviour {
 
   void Jump() {
     if (cor != null) StopCoroutine(cor);
-    rb.AddForce(0, jumpForce, 0, ForceMode.Impulse);
+    transform.Translate(transform.up * jumpForce * Time.deltaTime);
     stamina.value -= StaminaVars["jump"];
   }
 
@@ -200,13 +218,6 @@ public class Movement : MonoBehaviour {
       }
         
       child.localPosition = newPosition;
-    }
-  }
-
-  private void FixedUpdate() {
-    if (canJump) {
-      Jump();
-      canJump = false;
     }
   }
 }
