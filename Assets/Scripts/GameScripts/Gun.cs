@@ -55,7 +55,7 @@ public class Gun : MonoBehaviour {
     canShoot = Bullets > 0 ? true : false;
     canReload = Magazines > 0 ? true : false;
     muzzleFlashDuration = muzzleFlash.GetComponent<ParticleSystem>().main.duration;
-    magPlace = transform.Find("MagPlace").gameObject;
+    magPlace = transform.Find("Magazine_Placeholder").gameObject;
     mag = GameObject.FindWithTag("Mag");
     compMags.Create();
     FindMag();
