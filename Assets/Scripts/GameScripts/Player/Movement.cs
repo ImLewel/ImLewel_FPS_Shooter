@@ -12,6 +12,7 @@ public class Movement : MonoBehaviour {
   [SerializeField] private Transform rArm;
   [SerializeField] private Transform _playerBottom;
   [SerializeField] private Transform _playerTop;
+  [SerializeField] private Transform _aimTarget;
   private Camera main;
   private GameObject player;
   private CharacterController playerCollider;
@@ -46,6 +47,7 @@ public class Movement : MonoBehaviour {
   [SerializeField]
   Vector3 movementDirection = Vector3.zero;
   private float jumpStartAt;
+  private float heightGained;
 
   private bool canJump;
 
@@ -74,14 +76,7 @@ public class Movement : MonoBehaviour {
 
     rotY += PlayerMouseInput.x * sensitivity * Time.deltaTime;
 
-    float y = 0f;
-    if (Input.GetMouseButton(1))
-    {
-      y = -main.transform.parent.rotation.y;
-      Debug.Log(main.transform.parent);
-    }
-    Debug.DrawRay(main.transform.position, main.transform.forward * 3, Color.red);
-    main.transform.localRotation = Quaternion.Euler(rotX, y, 0f);
+    _aimTarget.transform.localRotation = Quaternion.Euler(rotX, 0f, 0f);
     //rArm.transform.localRotation = main.transform.localRotation;
 
     transform.localRotation = Quaternion.Euler(0f, rotY, 0f);
@@ -142,10 +137,6 @@ public class Movement : MonoBehaviour {
     {
       Accelerate(ref horizontalSpeed, 0f, playerInput.x);
     }
-    if (grounded)
-    {
-      movementDirection.y = 0f;
-    }
     if (!grounded)
     {
       if (playerCollider.collisionFlags == CollisionFlags.Sides)
@@ -163,6 +154,23 @@ public class Movement : MonoBehaviour {
 
     playerCollider.Move(movementDirection);
     UpdateCollider();
+  }
+
+  private void FixedUpdate()
+  {
+    if (grounded)
+    {
+      if (Input.GetKey(KeyCode.Space) && heightGained <= maxJumpHeight)
+      {
+        heightGained += jumpForce * Time.fixedDeltaTime;
+        movementDirection.y += jumpForce * Time.fixedDeltaTime;
+      }
+      else
+      {
+        heightGained = 0f;
+        movementDirection.y = 0f;
+      }
+    }
   }
 
   void UpdateCollider()
