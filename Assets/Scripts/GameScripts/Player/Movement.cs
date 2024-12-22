@@ -74,7 +74,14 @@ public class Movement : MonoBehaviour {
 
     rotY += PlayerMouseInput.x * sensitivity * Time.deltaTime;
 
-    main.transform.localRotation = Quaternion.Euler(rotX, 0f, 0f);
+    float y = 0f;
+    if (Input.GetMouseButton(1))
+    {
+      y = -main.transform.parent.rotation.y;
+      Debug.Log(main.transform.parent);
+    }
+    Debug.DrawRay(main.transform.position, main.transform.forward * 3, Color.red);
+    main.transform.localRotation = Quaternion.Euler(rotX, y, 0f);
     //rArm.transform.localRotation = main.transform.localRotation;
 
     transform.localRotation = Quaternion.Euler(0f, rotY, 0f);

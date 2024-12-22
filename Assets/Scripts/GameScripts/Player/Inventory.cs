@@ -63,6 +63,7 @@ public class Inventory : MonoBehaviour {
     prefab.transform.parent = rHand;
     prefab.transform.localPosition = prefab.GetComponent<Gun>().PrefabPos;
     prefab.transform.localRotation = Quaternion.identity;
+    prefab.transform.localRotation = Quaternion.Euler(prefab.GetComponent<Gun>().PrefabRot);
     prefab.GetComponent<BoxCollider>().enabled = false;
     prefab.GetComponent<Rigidbody>().isKinematic = true;
     DisableNActive();

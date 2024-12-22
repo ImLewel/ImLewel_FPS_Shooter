@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour {
   [SerializeField] private Vector3 prefabPos;
+  [SerializeField] private Vector3 prefabRot;
 
   [SerializeField] private GameObject muzzleFlash;
   [SerializeField] private CompatibleMags compMags;
@@ -24,6 +25,7 @@ public class Gun : MonoBehaviour {
   private bool canShoot;
   private bool canReload;
   public Vector3 PrefabPos { get => prefabPos; }
+  public Vector3 PrefabRot { get => prefabRot; }
   [SerializeField]
   private CompatibleMags.WeaponKind weaponKind;
 
