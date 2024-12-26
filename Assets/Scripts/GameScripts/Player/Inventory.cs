@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Inventory : MonoBehaviour {
-  [SerializeField] private Camera main;
+  [SerializeField] private Camera playerCamera;
   [SerializeField] private Transform rHand;
   private UImanager stats;
   private MainRayCast rayCaster;
@@ -29,8 +29,7 @@ public class Inventory : MonoBehaviour {
   }
 
   private void Start() {
-    main = Camera.main;
-    rayCaster = main.GetComponent<MainRayCast>();
+    rayCaster = playerCamera.GetComponent<MainRayCast>();
     stats = GameObject.Find("HUD").GetComponent<UImanager>();
   }
 

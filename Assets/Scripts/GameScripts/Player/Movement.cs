@@ -4,8 +4,9 @@ using UnityEngine.UI;
 using UnityEngine;
 using Unity.VisualScripting;
 using System.Threading.Tasks;
+using Unity.Netcode;
 
-public class Movement : MonoBehaviour {
+public class Movement : NetworkBehaviour {
   [SerializeField] private Vector3 playerInput;
   private Vector2 PlayerMouseInput;
 
@@ -13,7 +14,6 @@ public class Movement : MonoBehaviour {
   [SerializeField] private Transform _playerBottom;
   [SerializeField] private Transform _playerTop;
   [SerializeField] private Transform _aimTarget;
-  private Camera main;
   private GameObject player;
   private CharacterController playerCollider;
   private Transform body;
@@ -53,24 +53,32 @@ public class Movement : MonoBehaviour {
 
   private Dictionary<Transform, Vector3> originalChildPositions = new();
 
+  public override void OnNetworkSpawn()
+  {
+/*    if (!IsOwner)
+      this.enabled = false;*/
+  }
+
   void Start() {
     Cursor.lockState = CursorLockMode.Locked;
     player = transform.gameObject;
     playerCollider = player.GetComponent<CharacterController>();
     origPlayerHeight = playerCollider.height;
-    main = Camera.main;
     body = transform.Find("Body");
     stamina = GameObject.Find("HUD").GetComponent<UImanager>().progressBar;
   }
 
   void Update() {
-    playerInput = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
-    PlayerMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-    MoveCamera();
-    Move();
+    if (IsOwner)
+    {
+      playerInput = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+      PlayerMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+      MoveCamera();
+      Move();
+    }
   }
 
-  void MoveCamera() {
+  private void MoveCamera() {
     rotX -= PlayerMouseInput.y * sensitivity * Time.deltaTime;
     rotX = Mathf.Clamp(rotX, -90f, 90f);
 
@@ -155,7 +163,7 @@ public class Movement : MonoBehaviour {
     playerCollider.Move(movementDirection);
     UpdateCollider();
   }
-
+  
   private void FixedUpdate()
   {
     if (grounded)

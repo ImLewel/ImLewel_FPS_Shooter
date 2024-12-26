@@ -9,7 +9,7 @@ public class ButtonManager : MonoBehaviour {
       settings.SetActive(false);
     }
   }
-  public void OnPlayBtnClicked() => SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
+  public void OnPlayBtnClicked() => SceneManager.LoadScene("GameModeSelection", LoadSceneMode.Single);
   public void OnQuitBtnClicked() => Application.Quit();
   public void OnSettingsBtnClicked() {
     if (settings.activeInHierarchy) settings.SetActive(false);

@@ -2,11 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Unity.Netcode;
 
-public class AnimationStateController : MonoBehaviour
+public class AnimationStateController : NetworkBehaviour
 {
   private Animator _animator;
   private Movement _movement;
+
+  public override void OnNetworkSpawn()
+  {
+    if (!IsOwner)
+    {
+      enabled = false;
+      return;
+    }
+  }
+
   // Start is called before the first frame update
   void Start()
   {
@@ -17,41 +28,44 @@ public class AnimationStateController : MonoBehaviour
   // Update is called once per frame
   void Update()
   {
-    if (Input.GetKey(KeyCode.A))
+    if (IsOwner)
     {
-      _animator.SetFloat("VelocityX", -_movement.horizontalSpeed);
-    }
-    if (Input.GetKey(KeyCode.D))
-    {
-      _animator.SetFloat("VelocityX", _movement.horizontalSpeed);
-    }
-    if (Input.GetKey(KeyCode.W))
-    {
-      _animator.SetFloat("VelocityZ", _movement.verticalSpeed);
-    }
-    if (Input.GetAxis("Horizontal") == 0f)
-    {
-      _animator.SetFloat("VelocityX", _movement.horizontalSpeed);
-    }
-    if (Input.GetAxis("Vertical") == 0f)
-    {
-      _animator.SetFloat("VelocityZ", _movement.verticalSpeed);
-    }
-    if (Input.GetKey(KeyCode.Space))
-    {
-      _animator.SetBool("Jump", true);
-    }
-    else
-    {
-      _animator.SetBool("Jump", false);
-    }
-    if (Input.GetKey(KeyCode.LeftControl))
-    {
-      _animator.SetBool("Crouch", true);
-    }
-    else
-    {
-      _animator.SetBool("Crouch", false);
+      if (Input.GetKey(KeyCode.A))
+      {
+        _animator.SetFloat("VelocityX", -_movement.horizontalSpeed);
+      }
+      if (Input.GetKey(KeyCode.D))
+      {
+        _animator.SetFloat("VelocityX", _movement.horizontalSpeed);
+      }
+      if (Input.GetKey(KeyCode.W))
+      {
+        _animator.SetFloat("VelocityZ", _movement.verticalSpeed);
+      }
+      if (Input.GetAxis("Horizontal") == 0f)
+      {
+        _animator.SetFloat("VelocityX", _movement.horizontalSpeed);
+      }
+      if (Input.GetAxis("Vertical") == 0f)
+      {
+        _animator.SetFloat("VelocityZ", _movement.verticalSpeed);
+      }
+      if (Input.GetKey(KeyCode.Space))
+      {
+        _animator.SetBool("Jump", true);
+      }
+      else
+      {
+        _animator.SetBool("Jump", false);
+      }
+      if (Input.GetKey(KeyCode.LeftControl))
+      {
+        _animator.SetBool("Crouch", true);
+      }
+      else
+      {
+        _animator.SetBool("Crouch", false);
+      }
     }
   }
 }
