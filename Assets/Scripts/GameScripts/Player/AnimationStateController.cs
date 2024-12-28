@@ -8,6 +8,7 @@ public class AnimationStateController : NetworkBehaviour
 {
   private Animator _animator;
   private Movement _movement;
+  private PlayerComponents _playerComponents;
 
   public override void OnNetworkSpawn()
   {
@@ -21,7 +22,8 @@ public class AnimationStateController : NetworkBehaviour
   // Start is called before the first frame update
   void Start()
   {
-    _animator = GetComponent<Animator>();
+    _playerComponents = GetComponent<PlayerComponents>();
+    _animator = _playerComponents.playerAnimator;
     _movement = GetComponent<Movement>();
   }
 
@@ -50,9 +52,10 @@ public class AnimationStateController : NetworkBehaviour
       {
         _animator.SetFloat("VelocityZ", _movement.verticalSpeed);
       }
-      if (Input.GetKey(KeyCode.Space))
+      if (Input.GetKeyDown(KeyCode.Space) && _movement.grounded)
       {
         _animator.SetBool("Jump", true);
+        _playerComponents.playerSFXSource.PlayOneShot(_playerComponents.playerJump);
       }
       else
       {

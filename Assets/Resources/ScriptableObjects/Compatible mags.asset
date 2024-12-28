@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Compatible mags
   m_EditorClassIdentifier: 
   M4A4_Mags:
-  - {fileID: 3235455586529611052, guid: 634aae715c53da145a1dab0eb627472e, type: 3}
+  - {fileID: 0}
   GL17_Mags:
   - {fileID: 4139485198497214667, guid: 59e016b6be06f72499b4173187da8fb6, type: 3}

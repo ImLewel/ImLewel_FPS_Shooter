@@ -19,6 +19,8 @@ public class Movement : NetworkBehaviour {
   private Transform body;
   private Slider stamina;
 
+  private PlayerComponents playerComponents;
+
   private Coroutine cor;
 
   private float origPlayerHeight;
@@ -27,31 +29,21 @@ public class Movement : NetworkBehaviour {
   public float walkSpeed { private set; get; } = 5f;
   public float sprintSpeed { private set; get; } = 7f;
   public float crouchSpeed { private set; get; } = 3f;
-  [SerializeField]
-  public float horizontalSpeed;
-  [SerializeField]
-  public float verticalSpeed;
-  [SerializeField]
-  public float acceleration { private set; get; } = 6f;
-  [SerializeField]
-  private float jumpForce = 5f;
-  [SerializeField]
-  private float gravity = 2f;
-  [SerializeField]
-  private float maxJumpHeight = 1f;
+  [SerializeField] public float horizontalSpeed;
+  [SerializeField] public float verticalSpeed;
+  [SerializeField] public float acceleration { private set; get; } = 6f;
+  [SerializeField] private float jumpForce = 5f;
+  [SerializeField] private float gravity = 2f;
+  [SerializeField] private float maxJumpHeight = 1f;
   [SerializeField] private float sensitivity = 100f;
   [SerializeField] private float crouchOffset;
-  [SerializeField]
-  bool grounded;
+  public bool grounded;
 
-  [SerializeField]
-  Vector3 movementDirection = Vector3.zero;
+  [SerializeField] Vector3 movementDirection = Vector3.zero;
   private float jumpStartAt;
   private float heightGained;
 
   private bool canJump;
-
-  private Dictionary<Transform, Vector3> originalChildPositions = new();
 
   public override void OnNetworkSpawn()
   {
@@ -66,6 +58,7 @@ public class Movement : NetworkBehaviour {
     origPlayerHeight = playerCollider.height;
     body = transform.Find("Body");
     stamina = GameObject.Find("HUD").GetComponent<UImanager>().progressBar;
+    playerComponents = GetComponent<PlayerComponents>();
   }
 
   void Update() {
@@ -84,10 +77,17 @@ public class Movement : NetworkBehaviour {
 
     rotY += PlayerMouseInput.x * sensitivity * Time.deltaTime;
 
-    _aimTarget.transform.localRotation = Quaternion.Euler(rotX, 0f, 0f);
+    UpdateAimTargetClientRpc(Quaternion.Euler(rotX, 0f, 0f));
+    //_aimTarget.transform.localRotation = Quaternion.Euler(rotX, 0f, 0f);
     //rArm.transform.localRotation = main.transform.localRotation;
 
     transform.localRotation = Quaternion.Euler(0f, rotY, 0f);
+  }
+
+  [Rpc(SendTo.Everyone)]
+  void UpdateAimTargetClientRpc(Quaternion newTargetRotation)
+  {
+    _aimTarget.transform.localRotation = newTargetRotation;
   }
 
   private bool CheckGround()
@@ -129,11 +129,15 @@ public class Movement : NetworkBehaviour {
     }
     else if (Input.GetKey(KeyCode.LeftShift) && playerInput != Vector3.zero && !CeilChecker())
     {
+      if (!playerComponents.playerSFXSource.isPlaying)
+        playerComponents.playerSFXSource.PlayOneShot(playerComponents.playerRun);
       Accelerate(ref horizontalSpeed, sprintSpeed, playerInput.x);
       Accelerate(ref verticalSpeed, sprintSpeed, playerInput.z);
     }
     else if (!Input.GetKey(KeyCode.LeftShift) && playerInput != Vector3.zero && !CeilChecker())
     {
+      if (!playerComponents.playerSFXSource.isPlaying)
+        playerComponents.playerSFXSource.PlayOneShot(playerComponents.playerStep);
       Accelerate(ref horizontalSpeed, walkSpeed, playerInput.x);
       Accelerate(ref verticalSpeed, walkSpeed, playerInput.z);
     }
