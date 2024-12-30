@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum Team
@@ -11,31 +12,23 @@ public enum Team
 
 public class PlayerEventArgs
 {
-  public PlayerEventArgs(NetworkVariable<int> _playerHealth) 
+  public PlayerEventArgs(NetworkVariable<int> _playerHealth, NetworkVariable<ulong> _targetPlayerId, NetworkVariable<ulong> _killerPlayerId) 
   {
     playerHealth = _playerHealth;
+    targetPlayerId = _targetPlayerId;
+    killerPlayerId = _killerPlayerId;
   }
-  public PlayerEventArgs(NetworkVariable<Team> _playerTeam)
-  {
-    playerTeam = _playerTeam;
-  }
-  public PlayerEventArgs(int _damage, GameObject _hit)
-  {
-    damage = _damage;
-    hit = _hit;
-  }
-  public int damage;
+  public NetworkVariable<ulong> killerPlayerId;
+  public NetworkVariable<ulong> targetPlayerId;
   public NetworkVariable<int> playerHealth;
-  public NetworkVariable<Team> playerTeam;
-  public GameObject hit;
 }
 
 public class PlayerNetworkInfo : NetworkBehaviour
 {
-  public List<Material> TeamMaterial;
-  public GameObject playerSurface;
   public NetworkVariable<int> playerHealth;
-  public NetworkVariable<Team> playerTeam;
+  public NetworkVariable<ulong> playerId;
+  public NetworkVariable<ulong> killerId;
+  public NetworkVariable<int> kills;
   private UImanager playerUIManager;
 
   public delegate void PlayerEventHandler(object sender, PlayerEventArgs e);
@@ -44,21 +37,27 @@ public class PlayerNetworkInfo : NetworkBehaviour
   void Start()
   {
     if (IsOwner)
+    {
       playerUIManager =
         GetComponent<PlayerComponents>()
         .playerHUD.GetComponent<UImanager>();
-    //Team initialTeam = Random.Range(0, 2) == 0 ? Team.Blue : Team.Red;
-    playerTeam.OnValueChanged += (prev, newval) =>
-    {
-      ChangePlayerTeamRpc((int)newval);
-    };
+      kills.Value = 0;
+      kills.OnValueChanged += UpdateMyKillCount;
+    }
   }
 
   [Rpc(SendTo.Server)]
-  public void InitializePlayerClientRpc(Team team)
+  public void InitializePlayerClientRpc()
   {
     playerHealth.Value = 100;
-    playerTeam.Value = team;
+    playerId.Value = GetComponent<PlayerComponents>().playerNetworkObject.OwnerClientId;
+  }
+
+  void UpdateMyKillCount(int prev, int curr)
+  {
+    Debug.Log("Should have changed");
+    if (IsOwner)
+      playerUIManager.killsLabel.text = $"Kills {kills.Value}";
   }
 
   void Update()
@@ -67,30 +66,15 @@ public class PlayerNetworkInfo : NetworkBehaviour
     {
       playerUIManager.healthLabel.text = $"Health {playerHealth.Value}";
       if (playerHealth.Value <= 0)
-        PlayerDeadEvent?.Invoke(this, new PlayerEventArgs(playerHealth));
+        PlayerDeadEvent?.Invoke(this, new PlayerEventArgs(playerHealth, playerId, killerId));
     }
   }
 
   [Rpc(SendTo.Server)]
-  public void ChangePlayerTeamRpc(int selection)
-  {
-    playerTeam.Value = selection == 0 ? Team.Blue : Team.Red;
-    RepaintRpc(selection);
-  }
-
-  [Rpc(SendTo.Everyone)]
-  private void RepaintRpc(int selection)
-  {
-    playerSurface.GetComponent<SkinnedMeshRenderer>().materials = new Material[]
-    {
-      TeamMaterial[selection]
-    };
-  }
-
-  [Rpc(SendTo.Server)]
-  public void TakeDamageRpc(int damage)
+  public void TakeDamageRpc(int damage, ulong _killerId)
   {
     playerHealth.Value -= damage;
-    Debug.Log($"{PlayerPrefs.GetString("username")} received damage");
+    killerId.Value = _killerId;
+    Debug.Log($"{playerId.Value} received {damage} damage from {_killerId}");
   }
 }

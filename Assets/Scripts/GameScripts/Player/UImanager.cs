@@ -8,6 +8,7 @@ public class UImanager : NetworkBehaviour {
   public TextMeshProUGUI healthLabel;
   public TextMeshProUGUI bulletsLabel;
   public TextMeshProUGUI damageLabel;
+  public TextMeshProUGUI killsLabel;
   public TextMeshProUGUI magazinesLabel;
   public Slider progressBar;
 

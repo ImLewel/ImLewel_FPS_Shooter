@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class NetworkPlayersManagerInfo : MonoBehaviour
 {
-  public GameObject spawnPoints;
-  public List<Transform> spawnPointList;
+  public PlayerSpawner spawner;
   public GameObject playerPrefab;
   public int maxPlayers = 10;
-  public int maxTeamPlayers = 5;
 }

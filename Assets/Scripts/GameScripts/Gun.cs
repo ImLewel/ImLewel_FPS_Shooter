@@ -1,11 +1,6 @@
 using System;
-using System.Collections;
 using Unity.Netcode;
-using Unity.Netcode.Components;
-using Unity.Services.Authentication;
-using Unity.VisualScripting;
 using UnityEngine;
-using static PlayerNetworkInfo;
 
 public class Gun : NetworkBehaviour {
   [SerializeField] private Vector3 prefabPos;
@@ -24,6 +19,7 @@ public class Gun : NetworkBehaviour {
   private MainRayCast rayCaster;
   private GameObject currMag;
   private ParticleSystem muzzleParticleSystem;
+  private UImanager playerHUD;
 
   [SerializeField] private int maxBullets;
   [SerializeField] private int damage;
@@ -33,9 +29,6 @@ public class Gun : NetworkBehaviour {
   [SerializeField] private float muzzleFlashDuration;
   [SerializeField] private float cooldown;
   private float realTimeCooldown = 0;
-
-  public delegate void PlayerEventHandler(object sender, PlayerEventArgs e);
-  public event PlayerEventHandler PlayerDamageEvent;
 
   private bool canShoot;
   private bool canReload;
@@ -88,6 +81,7 @@ public class Gun : NetworkBehaviour {
           playerComponents = transform.root.GetComponent<PlayerComponents>();
           playerCamera = playerComponents.playerCamera;
           rayCaster = playerCamera.GetComponent<MainRayCast>();
+          playerHUD = playerComponents.playerHUD.GetComponent<UImanager>();
         }
         else
         {
@@ -101,6 +95,9 @@ public class Gun : NetworkBehaviour {
           }
           if (Input.GetKeyDown(KeyCode.R) && canReload)
             Reload();
+          playerHUD.bulletsLabel.text = $"Bullets: {bullets}";
+          playerHUD.magazinesLabel.text = $"Magazines: {magazines}";
+          playerHUD.damageLabel.text = $"Damage: {damage}";
         }
       }
       catch (Exception e)
@@ -155,7 +152,7 @@ public class Gun : NetworkBehaviour {
         var currPlayerEnemy = rayCaster.Hit.transform.gameObject.GetComponent<PlayerNetworkInfo>();
         if (currPlayerEnemy != null)
         {
-          currPlayerEnemy.TakeDamageRpc(damage);
+          currPlayerEnemy.TakeDamageRpc(damage, playerComponents.playerNetworkObject.OwnerClientId);
         }
       }
     }

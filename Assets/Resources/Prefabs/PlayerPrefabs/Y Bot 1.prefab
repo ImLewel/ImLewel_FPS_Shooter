@@ -273,7 +273,7 @@ SkinnedMeshRenderer:
   m_SortingOrder: 0
   serializedVersion: 2
   m_Quality: 0
-  m_UpdateWhenOffscreen: 0
+  m_UpdateWhenOffscreen: 1
   m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: -1525253381413818895, guid: 14f909564e1631245b15f5ff564b357d, type: 3}
   m_Bones:
@@ -1250,13 +1250,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.27
+  m_Height: 1.8
+  m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!114 &2782213790890755701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1295,13 +1295,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  TeamMaterial:
-  - {fileID: 2100000, guid: 4cc6770b7061a474aaaeda06358982ef, type: 2}
-  - {fileID: 2100000, guid: 118804be21d86a94aae31834216ab6b3, type: 2}
-  playerSurface: {fileID: 7809298665346223855}
   playerHealth:
     m_InternalValue: 0
-  playerTeam:
+  playerId:
+    m_InternalValue: 0
+  killerId:
+    m_InternalValue: 0
+  kills:
     m_InternalValue: 0
 --- !u!114 &7389726143960869056
 MonoBehaviour:
@@ -3624,7 +3624,7 @@ SkinnedMeshRenderer:
   m_SortingOrder: 0
   serializedVersion: 2
   m_Quality: 0
-  m_UpdateWhenOffscreen: 0
+  m_UpdateWhenOffscreen: 1
   m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4777371684598551356, guid: 14f909564e1631245b15f5ff564b357d, type: 3}
   m_Bones:
@@ -3976,6 +3976,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1148392674868834190, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
+      propertyPath: m_text
+      value: Nickname
+      objectReference: {fileID: 0}
+    - target: {fileID: 1148392674868834190, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
+      propertyPath: m_TextWrappingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2194957781494427676, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
+      propertyPath: m_TextWrappingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3343034820772786157, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
+      propertyPath: m_TextWrappingMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3343034820772786157, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
@@ -4021,6 +4037,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4178148701311248930, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
+      propertyPath: m_TextWrappingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4178148701311248930, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
@@ -4037,6 +4057,22 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4498842842232862792, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256164101787874643, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256164101787874643, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256164101787874643, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256164101787874643, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
@@ -4149,6 +4185,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6517590896449082774, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
+      propertyPath: killsLabel
+      value: 
+      objectReference: {fileID: 6221440179758233732}
+    - target: {fileID: 6517590896449082774, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
       propertyPath: healthLabel
       value: 
       objectReference: {fileID: 2813948961710632121}
@@ -4202,11 +4242,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7319706821849448319, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 319
+      value: 370.6
       objectReference: {fileID: 0}
     - target: {fileID: 7660753220265104102, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 319
+      value: 363.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 8686933258510924158, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
+      propertyPath: m_TextWrappingMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8686933258510924158, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
@@ -4231,6 +4275,17 @@ MonoBehaviour:
 --- !u!114 &3932980439955059499 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1148392674868834190, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
+  m_PrefabInstance: {fileID: 4141950268380224677}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6221440179758233732 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8011295928251573281, guid: ab9b019150465254d942e97c1ab3ead9, type: 3}
   m_PrefabInstance: {fileID: 4141950268380224677}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
