@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using Unity.Netcode;
 using Unity.Netcode.Components;
+using Unity.Services.Authentication;
 using Unity.VisualScripting;
 using UnityEngine;
+using static PlayerNetworkInfo;
 
 public class Gun : NetworkBehaviour {
   [SerializeField] private Vector3 prefabPos;
@@ -31,6 +33,9 @@ public class Gun : NetworkBehaviour {
   [SerializeField] private float muzzleFlashDuration;
   [SerializeField] private float cooldown;
   private float realTimeCooldown = 0;
+
+  public delegate void PlayerEventHandler(object sender, PlayerEventArgs e);
+  public event PlayerEventHandler PlayerDamageEvent;
 
   private bool canShoot;
   private bool canReload;
@@ -90,12 +95,12 @@ public class Gun : NetworkBehaviour {
           {
             if (Input.GetKey(KeyCode.Mouse0) && canShoot)
             {
-              ShootRpc();
+              Shoot();
               realTimeCooldown = Time.time + cooldown;
             }
           }
           if (Input.GetKeyDown(KeyCode.R) && canReload)
-            ReloadRpc();
+            Reload();
         }
       }
       catch (Exception e)
@@ -110,24 +115,48 @@ public class Gun : NetworkBehaviour {
   {
     if (playerCamera != null)
       Shoot();
+    
+  }
+
+  [Rpc(SendTo.Everyone)]
+  private void ShotEffectsRpc()
+  {
     muzzleParticleSystem.Emit(1);
     gunSFX.PlayOneShot(gunShotSound);
   }
 
   [Rpc(SendTo.Everyone)]
-  public void ReloadRpc()
+  public void ReloadEffectsRpc()
   {
-    Reload();
     gunSFX.PlayOneShot(gunReloadSound);
-    currMag = Instantiate(magPrefab, magPlace.transform);
   }
 
+  [Rpc(SendTo.Server)]
+  private void SpawnEmptyMagRpc()
+  {
+
+  }
+
+
   private void Shoot() {
-    Bullets--;
-    if (rayCaster.Cast(distance)) {
-      var currEnemy = rayCaster.Hit.transform.gameObject.GetComponent<Enemy>();
-      if (currEnemy != null) {
-        currEnemy.Health = currEnemy.Health - damage;
+    if (playerCamera != null)
+    {
+      Bullets--;
+      ShotEffectsRpc();
+
+      if (rayCaster.Cast(distance))
+      {
+        var currEnemy = rayCaster.Hit.transform.gameObject.GetComponent<Enemy>();
+        if (currEnemy != null)
+        {
+          currEnemy.Health = currEnemy.Health - damage;
+          return;
+        }
+        var currPlayerEnemy = rayCaster.Hit.transform.gameObject.GetComponent<PlayerNetworkInfo>();
+        if (currPlayerEnemy != null)
+        {
+          currPlayerEnemy.TakeDamageRpc(damage);
+        }
       }
     }
   }
@@ -136,15 +165,18 @@ public class Gun : NetworkBehaviour {
     currMag = magPlace.transform.GetChild(0).gameObject;
     if (currMag is not null)
     {
+/*      ReloadEffectsRpc();
       currMag.AddComponent<Rigidbody>();
       NetworkTransform magNetTransform = currMag.GetComponent<NetworkTransform>();
       magNetTransform.enabled = true;
       currMag.transform.SetParent(null);
       currMag.GetComponent<BoxCollider>().enabled = true;
       NetworkObject magNetObj = currMag.AddComponent<NetworkObject>();
-      magNetObj.SetSceneObjectStatus();
+      magNetObj.Spawn();
+      magNetObj.SetSceneObjectStatus(true);
+      SpawnEmptyMagRpc();*/
     }
-
+    //currMag = Instantiate(magPrefab, magPlace.transform);
     Bullets = maxBullets;
     Magazines--;
     canShoot = true;

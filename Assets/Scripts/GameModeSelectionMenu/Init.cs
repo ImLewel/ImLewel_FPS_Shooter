@@ -43,8 +43,8 @@ public class Init : NetworkBehaviour
     if (username == "")
     {
       username = "Player" + (int)Random.Range(0f, 256f);
-      PlayerPrefs.SetString("username", username);
     }
+    PlayerPrefs.SetString("username", username);
     Debug.Log($"{userId} signed as {username}");
   }
 

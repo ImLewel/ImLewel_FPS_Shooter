@@ -59,6 +59,7 @@ public class Movement : NetworkBehaviour {
     body = transform.Find("Body");
     stamina = GameObject.Find("HUD").GetComponent<UImanager>().progressBar;
     playerComponents = GetComponent<PlayerComponents>();
+    //Respawn();
   }
 
   void Update() {
@@ -68,7 +69,18 @@ public class Movement : NetworkBehaviour {
       PlayerMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
       MoveCamera();
       Move();
+      //if (playerComponents.playerNetworkInfo.playerHealth.Value <= 0)
+        //Respawn();
     }
+  }
+
+  void Respawn()
+  {
+/*    Transform newPos = playerComponents.playerSpawner.spawnPoints[Random.Range(0, 10)];
+    playerCollider.enabled = false;
+    transform.position = newPos.position;
+    transform.rotation = newPos.rotation;
+    playerCollider.enabled = true;*/
   }
 
   private void MoveCamera() {

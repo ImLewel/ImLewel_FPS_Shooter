@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class PlayerComponents : MonoBehaviour
 {
+  [Header("Misc")]
   public Camera playerCamera;
-  public NetworkTransform playerNetworkTransform;
-  public NetworkAnimator playerNetworkAnimator;
-  public NetworkObject playerNetworkObject;
   public CharacterController playerCharacterController;
   public GameObject playerHUD;
   public GameObject playerWeapon;
@@ -19,4 +17,17 @@ public class PlayerComponents : MonoBehaviour
   public AudioClip playerRun;
   public AudioClip playerJump;
 
+  [Header("Network Related")]
+  public NetworkTransform playerNetworkTransform;
+  public NetworkAnimator playerNetworkAnimator;
+  public NetworkObject playerNetworkObject;
+  public PlayerNetworkInfo playerNetworkInfo;
+
+  [Header("Player spawn points")]
+  public PlayerSpawner playerSpawner;
+
+  private void Start()
+  {
+    playerSpawner = GameObject.FindWithTag("Spawn").GetComponent<PlayerSpawner>();
+  }
 }
