@@ -41,3 +41,18 @@ It is simple indie shooter written in ```C#```, created in ```Unity```. Currentl
 ```git clone https://github.com/ImLewel/ImLewel_FPS_Shooter``` in the terminal<br>
 Or<br>
 Click green ```Code``` button and select any convenient way
+
+# Some in-game screenshots
+![alt text](./ReadmeScreenshots/image.png)
+
+![alt text](./ReadmeScreenshots/image2.png)
+
+![alt text](./ReadmeScreenshots/image3.png)
+
+![alt text](./ReadmeScreenshots/image4.png)
+
+![alt text](./ReadmeScreenshots/image5.png)
+
+![alt text](./ReadmeScreenshots/image6.png)
+
+![alt text](./ReadmeScreenshots/image7.png)
