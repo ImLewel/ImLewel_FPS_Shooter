@@ -1,7 +1,5 @@
-﻿using NUnit.Framework;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Unity.Netcode;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -50,17 +48,13 @@ public class NetworkPlayersManager : NetworkManager
 
   void RespawnPlayer(ulong clientId)
   {
-    // Получаем объект игрока по clientId
     currPlayer = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.gameObject;
 
-    // Уведомляем игрока о команде через RPC
     playerNetInfo = currPlayer.GetComponent<PlayerNetworkInfo>();
     playerNetInfo.InitializePlayerClientRpc();
 
-    // Получаем точку спавна
     currSpawnPoint = GetNewSpawnPoint();
 
-    // Обновляем позицию игрока только на сервере
     playerCollider = currPlayer.GetComponent<PlayerComponents>().playerCharacterController;
     playerCollider.enabled = false;
     currPlayer.transform.position = currSpawnPoint.position;

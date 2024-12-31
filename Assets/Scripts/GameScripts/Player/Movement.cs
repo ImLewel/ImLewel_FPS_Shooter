@@ -1,9 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections;
-using UnityEngine.UI;
+﻿using UnityEngine.UI;
 using UnityEngine;
-using Unity.VisualScripting;
-using System.Threading.Tasks;
 using Unity.Netcode;
 
 public class Movement : NetworkBehaviour {
@@ -14,14 +10,9 @@ public class Movement : NetworkBehaviour {
   [SerializeField] private Transform _playerBottom;
   [SerializeField] private Transform _playerTop;
   [SerializeField] private Transform _aimTarget;
-  private GameObject player;
   private CharacterController playerCollider;
-  private Transform body;
   private Slider stamina;
-
   private PlayerComponents playerComponents;
-
-  private Coroutine cor;
 
   private float origPlayerHeight;
   private float rotX;
@@ -29,37 +20,31 @@ public class Movement : NetworkBehaviour {
   public float walkSpeed { private set; get; } = 5f;
   public float sprintSpeed { private set; get; } = 7f;
   public float crouchSpeed { private set; get; } = 3f;
+  public float currentSpeed;
   [SerializeField] public float horizontalSpeed;
   [SerializeField] public float verticalSpeed;
-  [SerializeField] public float acceleration { private set; get; } = 6f;
-  [SerializeField] private float jumpForce = 5f;
-  [SerializeField] private float gravity = 2f;
+  [SerializeField] private float gravity = -9.8f;
   [SerializeField] private float maxJumpHeight = 1f;
   [SerializeField] private float sensitivity = 100f;
   [SerializeField] private float crouchOffset;
   public bool grounded;
+  public bool hasNotSpaceToStand;
+  public bool isTryingToRun;
+  public bool jumping;
 
   [SerializeField] Vector3 movementDirection = Vector3.zero;
-  private float jumpStartAt;
-  private float heightGained;
-
-  private bool canJump;
+  [SerializeField] Vector3 playerVelocity;
 
   public override void OnNetworkSpawn()
   {
-/*    if (!IsOwner)
-      this.enabled = false;*/
   }
 
   void Start() {
     Cursor.lockState = CursorLockMode.Locked;
-    player = transform.gameObject;
-    playerCollider = player.GetComponent<CharacterController>();
-    origPlayerHeight = playerCollider.height;
-    body = transform.Find("Body");
-    stamina = GameObject.Find("HUD").GetComponent<UImanager>().progressBar;
     playerComponents = GetComponent<PlayerComponents>();
-    //Respawn();
+    playerCollider = playerComponents.playerCharacterController;
+    stamina = playerComponents.playerHUD.GetComponent<UImanager>().progressBar;
+    origPlayerHeight = playerCollider.height;
   }
 
   void Update() {
@@ -69,18 +54,7 @@ public class Movement : NetworkBehaviour {
       PlayerMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
       MoveCamera();
       Move();
-      //if (playerComponents.playerNetworkInfo.playerHealth.Value <= 0)
-        //Respawn();
     }
-  }
-
-  void Respawn()
-  {
-/*    Transform newPos = playerComponents.playerSpawner.spawnPoints[Random.Range(0, 10)];
-    playerCollider.enabled = false;
-    transform.position = newPos.position;
-    transform.rotation = newPos.rotation;
-    playerCollider.enabled = true;*/
   }
 
   private void MoveCamera() {
@@ -90,8 +64,6 @@ public class Movement : NetworkBehaviour {
     rotY += PlayerMouseInput.x * sensitivity * Time.deltaTime;
 
     UpdateAimTargetClientRpc(Quaternion.Euler(rotX, 0f, 0f));
-    //_aimTarget.transform.localRotation = Quaternion.Euler(rotX, 0f, 0f);
-    //rArm.transform.localRotation = main.transform.localRotation;
 
     transform.localRotation = Quaternion.Euler(0f, rotY, 0f);
   }
@@ -105,96 +77,61 @@ public class Movement : NetworkBehaviour {
   private bool CheckGround()
   {
     RaycastHit hit;
-    Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * 10, Color.blue);
+    //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * 10, Color.blue);
     return Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, 0.1f);
   }
 
-  private void Accelerate(ref float current, float target, float axisValue)
-  {
-    if (axisValue != 0)
+  private void Move() {
+
+    grounded = CheckGround();
+    hasNotSpaceToStand = CeilChecker();
+    if (grounded)
     {
-      if (current > target)
+      playerVelocity.y = 0f;
+      if (stamina.value < 1f)
       {
-        current -= acceleration * Time.deltaTime;
+        UpdateStamina(0.2f);
       }
-      else
-      {
-        current += acceleration * Time.deltaTime;
-      }
+    }
+
+    if (Input.GetKeyDown(KeyCode.LeftShift))
+      isTryingToRun = true;
+
+    if (Input.GetKey(KeyCode.LeftControl) || hasNotSpaceToStand)
+      currentSpeed = crouchSpeed;
+    else if (Input.GetKey(KeyCode.LeftShift) && stamina.value > 0.2f && isTryingToRun)
+    {
+      currentSpeed = sprintSpeed;
+      UpdateStamina(-0.3f);
     }
     else
     {
-      if (current > target)
-      {
-        current -= acceleration * Time.deltaTime;
-      }
-    }
-  }
-
-  private void Move() {
-    grounded = CheckGround();
-
-    if (Input.GetKey(KeyCode.LeftControl))
-    {
-      Accelerate(ref horizontalSpeed, crouchSpeed, playerInput.x);
-      Accelerate(ref verticalSpeed, crouchSpeed, playerInput.z);
-    }
-    else if (Input.GetKey(KeyCode.LeftShift) && playerInput != Vector3.zero && !CeilChecker())
-    {
-      if (!playerComponents.playerSFXSource.isPlaying)
-        playerComponents.playerSFXSource.PlayOneShot(playerComponents.playerRun);
-      Accelerate(ref horizontalSpeed, sprintSpeed, playerInput.x);
-      Accelerate(ref verticalSpeed, sprintSpeed, playerInput.z);
-    }
-    else if (!Input.GetKey(KeyCode.LeftShift) && playerInput != Vector3.zero && !CeilChecker())
-    {
-      if (!playerComponents.playerSFXSource.isPlaying)
-        playerComponents.playerSFXSource.PlayOneShot(playerComponents.playerStep);
-      Accelerate(ref horizontalSpeed, walkSpeed, playerInput.x);
-      Accelerate(ref verticalSpeed, walkSpeed, playerInput.z);
-    }
-    if (playerInput.z == 0f)
-    {
-      Accelerate(ref verticalSpeed, 0f, playerInput.z);
-    }
-    if (playerInput.x == 0f)
-    {
-      Accelerate(ref horizontalSpeed, 0f, playerInput.x);
-    }
-    if (!grounded)
-    {
-      if (playerCollider.collisionFlags == CollisionFlags.Sides)
-        movementDirection.y = Mathf.Min(movementDirection.y, 0);
-      movementDirection.y -= gravity * Time.deltaTime;
+      currentSpeed = walkSpeed;
+      isTryingToRun = false;
     }
 
-    if (playerInput.magnitude > 1f)
-      playerInput.Normalize();
-    playerInput.x *= horizontalSpeed * Time.deltaTime;
-    playerInput.z *= verticalSpeed * Time.deltaTime;
-    Vector3 fromLocalToSpace = transform.TransformDirection(playerInput);
-    movementDirection.x = fromLocalToSpace.x;
-    movementDirection.z = fromLocalToSpace.z;
+    horizontalSpeed = currentSpeed * playerInput.x;
+    verticalSpeed = currentSpeed * playerInput.z;
+    movementDirection = (transform.forward * playerInput.z + transform.right * playerInput.x);
+    movementDirection = movementDirection.normalized * currentSpeed;
+    playerCollider.Move(movementDirection * Time.deltaTime);
 
-    playerCollider.Move(movementDirection);
-    UpdateCollider();
+    if (Input.GetKeyDown(KeyCode.Space) && grounded && !hasNotSpaceToStand && stamina.value > 0.1f)
+    {
+      jumping = true;
+      playerVelocity.y += Mathf.Sqrt(maxJumpHeight * -2.0f * gravity);
+      UpdateStamina(-0.3f, true);
+    }
+    else 
+      jumping = false;
+    playerVelocity.y += gravity * Time.deltaTime;
+    playerCollider.Move(playerVelocity * Time.deltaTime);
+
   }
   
   private void FixedUpdate()
   {
-    if (grounded)
-    {
-      if (Input.GetKey(KeyCode.Space) && heightGained <= maxJumpHeight)
-      {
-        heightGained += jumpForce * Time.fixedDeltaTime;
-        movementDirection.y += jumpForce * Time.fixedDeltaTime;
-      }
-      else
-      {
-        heightGained = 0f;
-        movementDirection.y = 0f;
-      }
-    }
+    UpdateCollider();
   }
 
   void UpdateCollider()
@@ -203,18 +140,10 @@ public class Movement : NetworkBehaviour {
     playerCollider.center = new Vector3(0, playerCollider.height / 2, 0);
   }
 
-  IEnumerator StaminaDelay((float rate, float barrier, float time) state) {
-    while (true) {
-      if (grounded) {
-        if (stamina.value > state.barrier) {
-          stamina.value -= state.rate * Time.deltaTime;
-        }
-        else if (stamina.value < state.barrier) {
-          stamina.value += state.rate * Time.deltaTime;
-        }
-      }
-      yield return new WaitForSeconds(state.time);
-    }
+  void UpdateStamina(float rate, bool instantly = false) {
+    if (!instantly)
+      rate *= Time.deltaTime;
+    stamina.value += rate;
   }
 
   public bool CeilChecker() {

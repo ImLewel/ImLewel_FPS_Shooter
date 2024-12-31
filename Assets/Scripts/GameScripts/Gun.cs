@@ -174,6 +174,7 @@ public class Gun : NetworkBehaviour {
       SpawnEmptyMagRpc();*/
     }
     //currMag = Instantiate(magPrefab, magPlace.transform);
+    ReloadEffectsRpc();
     Bullets = maxBullets;
     Magazines--;
     canShoot = true;

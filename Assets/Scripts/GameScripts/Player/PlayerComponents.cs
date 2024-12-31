@@ -29,5 +29,6 @@ public class PlayerComponents : MonoBehaviour
   private void Start()
   {
     playerSpawner = GameObject.FindWithTag("Spawn").GetComponent<PlayerSpawner>();
+    AudioListener.volume = PlayerPrefs.GetFloat("SFXVolume");
   }
 }

@@ -5,9 +5,11 @@ using TMPro;
 public class SettingsManager : MonoBehaviour {
   private TMP_Dropdown QualityDropdown;
   private Slider FpsSlider;
+  private Slider SFXSlider;
   private void Start() {
     QualityDropdown = transform.Find("QualityDropdown").GetComponent<TMP_Dropdown>();
     FpsSlider = transform.Find("FpsSlider").GetComponent<Slider>();
+    SFXSlider = transform.Find("SFXSlider").GetComponent<Slider>();
     ChangeFps();
   }
   public void OnVSyncBtnClicked() {
@@ -25,4 +27,8 @@ public class SettingsManager : MonoBehaviour {
     Application.targetFrameRate = (int)FpsSlider.value;
   }
 
+  public void ChangeSFXVolume()
+  {
+    PlayerPrefs.SetFloat("SFXVolume", SFXSlider.value);
+  }
 }
