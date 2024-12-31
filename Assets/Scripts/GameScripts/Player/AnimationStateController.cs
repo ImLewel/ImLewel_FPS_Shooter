@@ -32,26 +32,6 @@ public class AnimationStateController : NetworkBehaviour
   {
     if (IsOwner)
     {
-/*      if (Input.GetKey(KeyCode.A))
-      {
-        _animator.SetFloat("VelocityX", -_movement.horizontalSpeed);
-      }
-      if (Input.GetKey(KeyCode.D))
-      {
-        _animator.SetFloat("VelocityX", _movement.horizontalSpeed);
-      }
-      if (Input.GetKey(KeyCode.W))
-      {
-        _animator.SetFloat("VelocityZ", _movement.verticalSpeed);
-      }*/
-/*      if (Input.GetAxis("Horizontal") == 0f)
-      {
-        _animator.SetFloat("VelocityX", _movement.horizontalSpeed);
-      }
-      if (Input.GetAxis("Vertical") == 0f)
-      {
-        _animator.SetFloat("VelocityZ", _movement.verticalSpeed);
-      }*/
       if (Input.GetAxis("Horizontal") != 0f)
       {
         if (!_audioSource.isPlaying)

@@ -339,6 +339,7 @@ GameObject:
   - component: {fileID: 8670008745159153870}
   - component: {fileID: 6822983863778233262}
   - component: {fileID: 5304009903908429850}
+  - component: {fileID: 4426703030722275420}
   m_Layer: 0
   m_Name: w1v2
   m_TagString: Untagged
@@ -404,6 +405,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbbeaf355c114b34ba5b97532e8f5b87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   prefabPos: {x: -0.0177, y: 0.0937, z: 0.0008}
   prefabRot: {x: 0, y: 90, z: 0}
   muzzleFlash: {fileID: 7885291036390946230}
@@ -515,6 +517,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &4426703030722275420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 684825038136680519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48948dfe9d76b07488dacd46a7955fa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &802010727958125053
 GameObject:
   m_ObjectHideFlags: 0

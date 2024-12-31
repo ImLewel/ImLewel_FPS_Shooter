@@ -67,11 +67,11 @@ public class NetworkPlayersManager : NetworkManager
   {
     Debug.Log($"Player {args.targetPlayerId.Value} killed by {args.killerPlayerId.Value}");
     RespawnPlayer(args.targetPlayerId.Value);
-    UpdateKillCount(args.killerPlayerId.Value);
+    UpdateKillCountRpc(args.killerPlayerId.Value);
   }
 
-  [Rpc(SendTo.Server)]
-  void UpdateKillCount(ulong clientId)
+  [Rpc(SendTo.Owner)]
+  void UpdateKillCountRpc(ulong clientId)
   {
     currPlayer = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.gameObject;
     playerNetInfo = currPlayer.GetComponent<PlayerNetworkInfo>();

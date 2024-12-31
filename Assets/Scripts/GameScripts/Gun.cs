@@ -69,7 +69,6 @@ public class Gun : NetworkBehaviour {
     muzzleParticleSystem.Play();
     gunSFX = GetComponent<AudioSource>();
     GetComponent<BoxCollider>().enabled = false;
-    //muzzleFlashDuration = muzzleFlash.GetComponent<ParticleSystem>().main.duration;
   }
   private void Update() {
     if (IsOwner)

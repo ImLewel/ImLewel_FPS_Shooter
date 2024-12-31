@@ -1269,7 +1269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1975187576
+  GlobalObjectIdHash: 2819271321
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -1344,6 +1344,9 @@ MonoBehaviour:
   sensitivity: 100
   crouchOffset: 0
   grounded: 0
+  hasNotSpaceToStand: 0
+  isTryingToRun: 0
+  jumping: 0
   movementDirection: {x: 0, y: 0, z: 0}
   playerVelocity: {x: 0, y: 0, z: 0}
 --- !u!114 &4141950268373662591
@@ -4572,10 +4575,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 684825038136680519, guid: f8c4c5b104d078e4eb333a1fded04da0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6762509787304931419}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f8c4c5b104d078e4eb333a1fded04da0, type: 3}
 --- !u!4 &917563416602656396 stripped
 Transform:
@@ -4642,18 +4642,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 684825038136680519, guid: f8c4c5b104d078e4eb333a1fded04da0, type: 3}
   m_PrefabInstance: {fileID: 6969193024260741127}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6762509787304931419
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7581652330154506304}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48948dfe9d76b07488dacd46a7955fa1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &9013516994217327705 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2135266780215780446, guid: f8c4c5b104d078e4eb333a1fded04da0, type: 3}

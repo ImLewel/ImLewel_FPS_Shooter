@@ -53,7 +53,6 @@ public class PlayerNetworkInfo : NetworkBehaviour
 
   void UpdateMyKillCount(int prev, int curr)
   {
-    Debug.Log("Should have changed");
     if (IsOwner)
       playerUIManager.killsLabel.text = $"Kills {kills.Value}";
   }
