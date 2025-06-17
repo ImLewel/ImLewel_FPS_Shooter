@@ -161,18 +161,7 @@ public class Gun : NetworkBehaviour {
     currMag = magPlace.transform.GetChild(0).gameObject;
     if (currMag is not null)
     {
-/*      ReloadEffectsRpc();
-      currMag.AddComponent<Rigidbody>();
-      NetworkTransform magNetTransform = currMag.GetComponent<NetworkTransform>();
-      magNetTransform.enabled = true;
-      currMag.transform.SetParent(null);
-      currMag.GetComponent<BoxCollider>().enabled = true;
-      NetworkObject magNetObj = currMag.AddComponent<NetworkObject>();
-      magNetObj.Spawn();
-      magNetObj.SetSceneObjectStatus(true);
-      SpawnEmptyMagRpc();*/
     }
-    //currMag = Instantiate(magPrefab, magPlace.transform);
     ReloadEffectsRpc();
     Bullets = maxBullets;
     Magazines--;
