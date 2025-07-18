@@ -2,21 +2,12 @@ using UnityEngine;
 using Unity.Netcode;
 using System.Collections.Generic;
 
-public class AnimationStateController : NetworkBehaviour
+public class AnimationStateController : MonoBehaviour
 {
   private Animator _animator;
   private Movement _movement;
   private PlayerComponents _playerComponents;
   private AudioSource _audioSource;
-
-  public override void OnNetworkSpawn()
-  {
-    if (!IsOwner)
-    {
-      enabled = false;
-      return;
-    }
-  }
 
   // Start is called before the first frame update
   void Start()
@@ -30,8 +21,6 @@ public class AnimationStateController : NetworkBehaviour
   // Update is called once per frame
   void Update()
   {
-    if (IsOwner)
-    {
       if (Input.GetAxis("Horizontal") != 0f)
       {
         if (!_audioSource.isPlaying)
@@ -72,5 +61,4 @@ public class AnimationStateController : NetworkBehaviour
         _animator.SetBool("Crouch", false);
       }
     }
-  }
 }

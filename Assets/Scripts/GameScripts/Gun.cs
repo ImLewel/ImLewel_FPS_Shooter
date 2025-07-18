@@ -2,7 +2,7 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Gun : NetworkBehaviour {
+public class Gun : MonoBehaviour {
   [SerializeField] private Vector3 prefabPos;
   [SerializeField] private Vector3 prefabRot;
 
@@ -70,101 +70,104 @@ public class Gun : NetworkBehaviour {
     gunSFX = GetComponent<AudioSource>();
     GetComponent<BoxCollider>().enabled = false;
   }
-  private void Update() {
-    if (IsOwner)
-    {
-      try
-      {
-        if (playerComponents == null)
-        {
-          playerComponents = transform.root.GetComponent<PlayerComponents>();
-          playerCamera = playerComponents.playerCamera;
-          rayCaster = playerCamera.GetComponent<MainRayCast>();
-          playerHUD = playerComponents.playerHUD.GetComponent<UImanager>();
-        }
-        else
-        {
-          if (Time.time > realTimeCooldown)
-          {
-            if (Input.GetKey(KeyCode.Mouse0) && canShoot)
-            {
-              Shoot();
-              realTimeCooldown = Time.time + cooldown;
-            }
-          }
-          if (Input.GetKeyDown(KeyCode.R) && canReload)
-            Reload();
-          playerHUD.bulletsLabel.text = $"Bullets: {bullets}";
-          playerHUD.magazinesLabel.text = $"Magazines: {magazines}";
-          playerHUD.damageLabel.text = $"Damage: {damage}";
-        }
-      }
-      catch (Exception e)
-      {
-        Debug.LogException(e);
-      }
-    }
-  }
+  //private void Update()
+  //{
+  //  if (IsOwner)
+  //  {
+  //    try
+  //    {
+  //      if (playerComponents == null)
+  //      {
+  //        playerComponents = transform.root.GetComponent<PlayerComponents>();
+  //        playerCamera = playerComponents.playerCamera;
+  //        rayCaster = playerCamera.GetComponent<MainRayCast>();
+  //        playerHUD = playerComponents.playerHUD.GetComponent<UImanager>();
+  //      }
+  //      else
+  //      {
+  //        if (Time.time > realTimeCooldown)
+  //        {
+  //          if (Input.GetKey(KeyCode.Mouse0) && canShoot)
+  //          {
+  //            Shoot();
+  //            realTimeCooldown = Time.time + cooldown;
+  //          }
+  //        }
+  //        if (Input.GetKeyDown(KeyCode.R) && canReload)
+  //          Reload();
+  //        playerHUD.bulletsLabel.text = $"Bullets: {bullets}";
+  //        playerHUD.magazinesLabel.text = $"Magazines: {magazines}";
+  //        playerHUD.damageLabel.text = $"Damage: {damage}";
+  //      }
+  //    }
+  //    catch (Exception e)
+  //    {
+  //      Debug.LogException(e);
+  //    }
+  //  }
+  //}
 
-  [Rpc(SendTo.Everyone)]
-  public void ShootRpc()
-  {
-    if (playerCamera != null)
-      Shoot();
-    
-  }
+  //[Rpc(SendTo.Everyone)]
+  //public void ShootRpc()
+  //{
+  //  if (playerCamera != null)
+  //    Shoot();
 
-  [Rpc(SendTo.Everyone)]
-  private void ShotEffectsRpc()
-  {
-    muzzleParticleSystem.Emit(1);
-    gunSFX.PlayOneShot(gunShotSound);
-  }
+  //}
 
-  [Rpc(SendTo.Everyone)]
-  public void ReloadEffectsRpc()
-  {
-    gunSFX.PlayOneShot(gunReloadSound);
-  }
+  //[Rpc(SendTo.Everyone)]
+  //private void ShotEffectsRpc()
+  //{
+  //  muzzleParticleSystem.Emit(1);
+  //  gunSFX.PlayOneShot(gunShotSound);
+  //}
 
-  [Rpc(SendTo.Server)]
-  private void SpawnEmptyMagRpc()
-  {
+  //[Rpc(SendTo.Everyone)]
+  //public void ReloadEffectsRpc()
+  //{
+  //  gunSFX.PlayOneShot(gunReloadSound);
+  //}
 
-  }
+  //[Rpc(SendTo.Server)]
+  //private void SpawnEmptyMagRpc()
+  //{
+
+  //}
 
 
-  private void Shoot() {
-    if (playerCamera != null)
-    {
-      Bullets--;
-      ShotEffectsRpc();
+  //private void Shoot()
+  //{
+  //  if (playerCamera != null)
+  //  {
+  //    Bullets--;
+  //    ShotEffectsRpc();
 
-      if (rayCaster.Cast(distance))
-      {
-        var currEnemy = rayCaster.Hit.transform.gameObject.GetComponent<Enemy>();
-        if (currEnemy != null)
-        {
-          currEnemy.Health = currEnemy.Health - damage;
-          return;
-        }
-        var currPlayerEnemy = rayCaster.Hit.transform.gameObject.GetComponent<PlayerNetworkInfo>();
-        if (currPlayerEnemy != null)
-        {
-          currPlayerEnemy.TakeDamageRpc(damage, playerComponents.playerNetworkObject.OwnerClientId);
-        }
-      }
-    }
-  }
+  //    if (rayCaster.Cast(distance))
+  //    {
+  //      var currEnemy = rayCaster.Hit.transform.gameObject.GetComponent<Enemy>();
+  //      if (currEnemy != null)
+  //      {
+  //        currEnemy.Health = currEnemy.Health - damage;
+  //        return;
+  //      }
+  //      var currPlayerEnemy = rayCaster.Hit.transform.gameObject.GetComponent<PlayerNetworkInfo>();
+  //      if (currPlayerEnemy != null)
+  //      {
+  //        currPlayerEnemy.TakeDamageRpc(damage, playerComponents.playerNetworkObject.OwnerClientId);
+  //      }
+  //    }
+  //  }
+  //}
 
-  private void Reload() {
-    currMag = magPlace.transform.GetChild(0).gameObject;
-    if (currMag is not null)
-    {
-    }
-    ReloadEffectsRpc();
-    Bullets = maxBullets;
-    Magazines--;
-    canShoot = true;
-  }
+  //private void Reload()
+  //{
+  //  currMag = magPlace.transform.GetChild(0).gameObject;
+  //  if (currMag is not null)
+  //  {
+  //  }
+  //  ReloadEffectsRpc();
+  //  Bullets = maxBullets;
+  //  Magazines--;
+  //  canShoot = true;
+  //}
 }

@@ -1,12 +1,6 @@
-using Unity.Netcode;
+using UnityEngine;
 
-public class CameraAssign : NetworkBehaviour
+public class CameraAssign : MonoBehaviour
 {
-  public override void OnNetworkSpawn()
-  {
-    if (!IsOwner)
-    {
-      gameObject.SetActive(false);
-    }
-  }
+
 }

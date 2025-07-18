@@ -2,7 +2,7 @@
 using UnityEngine;
 using Unity.Netcode;
 
-public class Movement : NetworkBehaviour {
+public class Movement : MonoBehaviour {
   [SerializeField] private Vector3 playerInput;
   private Vector2 PlayerMouseInput;
 
@@ -35,10 +35,6 @@ public class Movement : NetworkBehaviour {
   [SerializeField] Vector3 movementDirection = Vector3.zero;
   [SerializeField] Vector3 playerVelocity;
 
-  public override void OnNetworkSpawn()
-  {
-  }
-
   void Start() {
     Cursor.lockState = CursorLockMode.Locked;
     playerComponents = GetComponent<PlayerComponents>();
@@ -48,13 +44,12 @@ public class Movement : NetworkBehaviour {
   }
 
   void Update() {
-    if (IsOwner)
-    {
+
       playerInput = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
       PlayerMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
       MoveCamera();
       Move();
-    }
+
   }
 
   private void MoveCamera() {
@@ -63,16 +58,16 @@ public class Movement : NetworkBehaviour {
 
     rotY += PlayerMouseInput.x * sensitivity * Time.deltaTime;
 
-    UpdateAimTargetClientRpc(Quaternion.Euler(rotX, 0f, 0f));
+    //UpdateAimTargetClientRpc(Quaternion.Euler(rotX, 0f, 0f));
 
     transform.localRotation = Quaternion.Euler(0f, rotY, 0f);
   }
 
-  [Rpc(SendTo.Everyone)]
-  void UpdateAimTargetClientRpc(Quaternion newTargetRotation)
-  {
-    _aimTarget.transform.localRotation = newTargetRotation;
-  }
+  //[Rpc(SendTo.Everyone)]
+  //void UpdateAimTargetClientRpc(Quaternion newTargetRotation)
+  //{
+  //  _aimTarget.transform.localRotation = newTargetRotation;
+  //}
 
   private bool CheckGround()
   {

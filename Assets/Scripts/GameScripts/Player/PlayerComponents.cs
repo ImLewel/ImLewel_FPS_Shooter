@@ -17,11 +17,11 @@ public class PlayerComponents : MonoBehaviour
   public AudioClip playerRun;
   public AudioClip playerJump;
 
-  [Header("Network Related")]
+/*  [Header("Network Related")]
   public NetworkTransform playerNetworkTransform;
   public NetworkAnimator playerNetworkAnimator;
   public NetworkObject playerNetworkObject;
-  public PlayerNetworkInfo playerNetworkInfo;
+  public PlayerNetworkInfo playerNetworkInfo;*/
 
   [Header("Player spawn points")]
   public PlayerSpawner playerSpawner;
